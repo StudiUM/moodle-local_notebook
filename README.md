@@ -1,3 +1,4 @@
 # moodle-local_notebook
 
-Dépôt pour le plugin Moodle de prise de notes personnelles développé à l'UdeM par l'équipe StudiUM.
+Local type plugin for note taking in Moodle.
+Developped by StudiUM Team at Montreal University (Université de Montréal).
