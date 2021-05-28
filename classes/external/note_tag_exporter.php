@@ -15,18 +15,41 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Notebook local plugin version information.
+ * Class for exporting data of tag.
  *
  * @package    local_notebook
  * @copyright  2021 Université de Montréal
- * @author     Mélissa De Cristofaro <melissa.de.cristofaro@umontreal.ca>
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace local_notebook\external;
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version  = 2021052700;
-$plugin->requires = 2019111803; /*TODO changer pour 3.10 quand on aura migré : 2020110900*/
-$plugin->maturity  = MATURITY_ALPHA;
-$plugin->release   = '0.0.1 (Build 2021051100)';
-$plugin->component = 'local_notebook';
+use renderer_base;
+
+/**
+ * Class for exporting data of tag.
+ *
+ * @package    local_notebook
+ * @copyright  2021 Université de Montréal
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
+ * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
+ */
+class note_tag_exporter extends \core\external\exporter {
+
+    /**
+     * Return the list of properties.
+     *
+     * @return array
+     */
+    protected static function define_properties() {
+        return array(
+            'url' => array(
+                'type' => PARAM_RAW
+            ),
+            'title' => array(
+                'type' => PARAM_RAW
+            )
+        );
+    }
+}

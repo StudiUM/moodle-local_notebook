@@ -23,5 +23,15 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
+$string['notenotfound'] = 'The note is not found.';
+$string['notecannotbeempty'] = 'The note cannot be empty.';
 $string['pluginname'] = 'Notebook';
 $string['privacy:metadata'] = 'The Notebook plugin does not store any personal data.';
+$string['subjectcannotbeempty'] = 'The subject cannot be empty.';
+$string['usercannotaccesscourse'] = 'The user cannot access to the course information.';
+$string['usercannotaccesscoursemodule'] = 'The user cannot access to the course module.';
+$string['usercannotdeletenote'] = 'The user cannot delete the note.';
+$string['usercannotreadnote'] = 'The user cannot read the note.';
+$string['usercannotupdatenote'] = 'The user cannot update the note.';
+$string['usernotenrolledincourse'] = 'The user is not enrolled in the course.';
