@@ -328,7 +328,7 @@ class external extends external_api {
             $params['coursemoduleid']);
         $results = array();
         foreach ($records as $record) {
-            unset($record->rank);
+            unset($record->ranking);
             $note = new post($record->id);
             $exporter = new \local_notebook\external\notebook_exporter($note, array('context' => context_system::instance()));
             $r = $exporter->export($output);

@@ -224,7 +224,7 @@ class api {
             $sql = "
                   SELECT DISTINCT(id)
                     FROM (
-                 (SELECT 1 as rank, p.*
+                 (SELECT 1 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.courseid = :courseid
                          AND p.coursemoduleid = 0
@@ -232,24 +232,24 @@ class api {
                          AND p.usermodified = :userid1
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 2 as rank, p.*
+                 (SELECT 2 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.courseid = :courseid2
                          AND (p.coursemoduleid <> 0 OR p.userid <> 0)
                          AND p.usermodified = :userid2
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 3 as rank, p.*
+                 (SELECT 3 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.courseid <> 0
                          AND p.usermodified = :userid3
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 4 as rank, p.*
+                 (SELECT 4 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.usermodified = :userid4
                          AND p.module = 'notebook')) a
-                ORDER BY a.rank ASC, a.created DESC, a.id DESC";
+                ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['courseid'] = $courseid;
                 $params['courseid2'] = $courseid;
                 $params['userid1'] = $USER->id;
@@ -262,31 +262,31 @@ class api {
             $sql = "
                   SELECT DISTINCT(id)
                     FROM (
-                 (SELECT 1 as rank, p.*
+                 (SELECT 1 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid = :relateduserid
                          AND p.courseid = 0
                          AND p.usermodified = :userid1
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 2 as rank, p.*
+                 (SELECT 2 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid = :relateduserid2
                          AND p.courseid <> 0
                          AND p.usermodified = :userid2
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 3 as rank, p.*
+                 (SELECT 3 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid <> 0
                          AND p.usermodified = :userid3
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 4 as rank, p.*
+                 (SELECT 4 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.usermodified = :userid4
                          AND p.module = 'notebook')) a
-                ORDER BY a.rank ASC, a.created DESC, a.id DESC";
+                ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['relateduserid'] = $userid;
                 $params['relateduserid2'] = $userid;
                 $params['userid1'] = $USER->id;
@@ -299,30 +299,30 @@ class api {
             $sql = "
                   SELECT DISTINCT(id)
                     FROM (
-                 (SELECT 1 as rank, p.*
+                 (SELECT 1 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid = :relateduserid
                          AND p.courseid = :courseid
                          AND p.usermodified = :userid1
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 2 as rank, p.*
+                 (SELECT 2 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid = :relateduserid2
                          AND p.usermodified = :userid2
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 3 as rank, p.*
+                 (SELECT 3 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid <> 0
                          AND p.usermodified = :userid3
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 4 as rank, p.*
+                 (SELECT 4 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.usermodified = :userid4
                          AND p.module = 'notebook')) a
-                ORDER BY a.rank ASC, a.created DESC, a.id DESC";
+                ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['relateduserid'] = $userid;
                 $params['relateduserid2'] = $userid;
                 $params['courseid'] = $courseid;
@@ -336,43 +336,43 @@ class api {
             $sql = "
                   SELECT DISTINCT(id)
                     FROM (
-                 (SELECT 1 as rank, p.*
+                 (SELECT 1 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.coursemoduleid = :coursemoduleid
                          AND p.usermodified = :userid1
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 2 as rank, p.*
+                 (SELECT 2 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.coursemoduleid = 0
                          AND  p.courseid = :courseid
                          AND p.usermodified = :userid2
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 3 as rank, p.*
+                 (SELECT 3 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.coursemoduleid <> 0
                          AND  p.courseid = :courseid2
                          AND p.usermodified = :userid3
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 4 as rank, p.*
+                 (SELECT 4 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.coursemoduleid <> 0
                          AND p.usermodified = :userid4
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 5 as rank, p.*
+                 (SELECT 5 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.courseid <> 0
                          AND p.usermodified = :userid5
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 6 as rank, p.*
+                 (SELECT 6 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.usermodified = :userid6
                          AND p.module = 'notebook')) a
-                ORDER BY a.rank ASC, a.created DESC, a.id DESC";
+                ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $cm = get_coursemodule_from_id('', $coursemoduleid, 0, true, MUST_EXIST);
                 $params['coursemoduleid'] = $cm->id;
                 $params['courseid'] = $cm->course;
@@ -388,7 +388,7 @@ class api {
             $sql = "
                   SELECT DISTINCT(id)
                     FROM (
-                 (SELECT 1 as rank, p.*
+                 (SELECT 1 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.userid = 0
                          AND p.courseid = 0
@@ -396,11 +396,11 @@ class api {
                          AND p.usermodified = :userid1
                          AND p.module = 'notebook')
                    UNION
-                 (SELECT 2 as rank, p.*
+                 (SELECT 2 as ranking, p.*
                     FROM {" . \local_notebook\post::TABLE . "} p
                    WHERE p.usermodified = :userid2
                          AND p.module = 'notebook')) a
-                ORDER BY a.rank ASC, a.created DESC, a.id DESC";
+                ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['userid1'] = $USER->id;
                 $params['userid2'] = $USER->id;
         }
