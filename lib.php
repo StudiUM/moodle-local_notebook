@@ -24,3 +24,12 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+
+use tool_usertours\helper;
+
+/**
+ * Extend the user navigation to bootstrap notebook.
+ */
+function local_notebook_extend_navigation_user() {
+    \local_notebook\helper::bootstrap();
+}

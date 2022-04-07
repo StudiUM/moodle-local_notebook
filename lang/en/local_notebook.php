@@ -26,6 +26,7 @@
 $string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
 $string['notenotfound'] = 'The note is not found.';
 $string['notecannotbeempty'] = 'The note cannot be empty.';
+$string['openmynotebook'] = 'Open my notebook';
 $string['pluginname'] = 'Notebook';
 $string['privacy:metadata'] = 'The Notebook plugin does not store any personal data.';
 $string['subjectcannotbeempty'] = 'The subject cannot be empty.';
