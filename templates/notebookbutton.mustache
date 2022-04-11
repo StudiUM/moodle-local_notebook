@@ -26,8 +26,25 @@
     * None
 }}
 <div class="notebookbutton">
-  <a class="rolling" href="#">
-      <span class="rolling_icon"><i class="fa fa-file"></i></span>
+  <a class="rolling" href="#" id='notebook-drawer-toggle-{{uniqid}}' role="button">
+      <span class="rolling_icon"><i class="fa fa-file" aria-hidden="true"></i></span>
       <span class="rolling_text">{{#str}}openmynotebook, local_notebook{{/str}}</span>
-  </a>                  
+  </a>
+  <span class="sr-only sr-only-focusable" data-region="jumpto" tabindex="-1"></span>
 </div>
+
+{{#js}}
+require(['jquery',
+        'core/custom_interaction_events',
+        'core/pubsub'], function($, CustomEvents, PubSub) {
+    var button = $('#notebook-drawer-toggle-{{uniqid}}');
+    var button = $(button);
+    CustomEvents.define(button, [CustomEvents.events.activate]);
+    button.on(CustomEvents.events.activate, function(e, data) {
+        PubSub.publish('notebook-drawer-toggle', 'notebook-drawer-toggle-{{uniqid}}');
+        button.focus();
+        data.originalEvent.preventDefault();
+    });
+});
+{{/js}}
+

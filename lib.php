@@ -28,8 +28,22 @@ defined('MOODLE_INTERNAL') || die();
 use tool_usertours\helper;
 
 /**
- * Extend the user navigation to bootstrap notebook.
+ * The standard HTML that should be output just before the <footer> tag.
+ * Designed to be called in theme layout.php files.
+ * @return string HTML
  */
-function local_notebook_extend_navigation_user() {
-    \local_notebook\helper::bootstrap();
+function local_notebook_standard_after_main_region_html() {
+    return  \local_notebook\helper::render_notebook_drawer();
 }
+
+/**
+ * The standard tags (typically skip links) that should be output just inside
+ * the start of the <body> tag.
+ *
+ * @return string HTML
+ */
+function local_notebook_before_standard_top_of_body_html() {
+    return  \local_notebook\helper::render_notebook_button();
+}
+
+

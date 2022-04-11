@@ -1,0 +1,70 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_notebook/notebook_drawer
+
+    This template will render the notebook drawer.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * none
+
+    Example context (json):
+    {}
+
+}}
+<div
+    id="{{$drawerid}}drawer-{{uniqid}}{{/drawerid}}"
+    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}}"
+    aria-expanded="{{#show}}true{{/show}}{{^show}}false{{/show}}"
+    {{^show}}aria-hidden="true"{{/show}}
+    data-region="right-hand-notebook-drawer"
+    role="region"
+    tabindex="0"
+>
+    <div id="notebook-drawer-{{uniqid}}" data-region="notebook-drawer" role="region" class="message-app">
+        <h2 class="accesshide">{{#str}} pluginname, local_notebook {{/str}}</h2>
+        <div class="closewidget text-right pr-2">
+            <a class="text-dark btn-link" data-action="closedrawer" href="#"
+                title="{{#cleanstr}} closebuttontitle {{/cleanstr}}" aria-label="{{#cleanstr}} closebuttontitle {{/cleanstr}}"
+            >
+                {{#pix}} i/window_close, core {{/pix}}
+            </a>
+        </div>
+        <div class="header-container position-relative" data-region="header-container">
+            header container
+        </div>
+        <div class="body-container position-relative" data-region="body-container">
+            body container
+        </div>
+        <div class="footer-container position-relative" data-region="footer-container">
+            footer container
+        </div>
+    </div>
+</div>
+
+{{#js}}
+require(['jquery', 'local_notebook/notebook_drawer'], function($, NotebookDrawer) {
+    var root = $('#notebook-drawer-{{uniqid}}');
+    NotebookDrawer.init(root);
+});
+{{/js}}

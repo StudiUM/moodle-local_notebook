@@ -37,22 +37,24 @@ defined('MOODLE_INTERNAL') || die();
 class helper {
 
     /**
-     * Display notebook button in current page.
+     * Renders the notebook drawer.
+     *
+     * @return string The HTML.
      */
-    public static function bootstrap() {
+    public static function render_notebook_drawer() {
         global $PAGE;
-
-        if (!isloggedin() || isguestuser()) {
-            return;
-        }
-
-        if (in_array($PAGE->pagelayout, ['maintenance', 'embedded', 'secure', 'print', 'redirect'])) {
-            // Do not try to show the button in (maintenance/secure/embedded) mode,
-            // when printing, or during redirects.
-            return;
-        }
-
-        $PAGE->requires->js_call_amd('local_notebook/notebook', 'init', []);
+        $renderer = $PAGE->get_renderer('core');
+        return $renderer->render_from_template('local_notebook/notebook_drawer', []);
     }
 
+    /**
+     * Renders the notebook button.
+     *
+     * @return string The HTML.
+     */
+    public static function render_notebook_button() {
+        global $PAGE;
+        $renderer = $PAGE->get_renderer('core');
+        return $renderer->render_from_template('local_notebook/notebookbutton', []);
+    }
 }
