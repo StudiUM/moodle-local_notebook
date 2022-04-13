@@ -43,6 +43,9 @@ class helper {
      */
     public static function render_notebook_drawer() {
         global $PAGE;
+        if (!self::has_to_display_notebook()) {
+            return;
+        }
         $renderer = $PAGE->get_renderer('core');
         return $renderer->render_from_template('local_notebook/notebook_drawer', []);
     }
@@ -54,7 +57,28 @@ class helper {
      */
     public static function render_notebook_button() {
         global $PAGE;
+        if (!self::has_to_display_notebook()) {
+            return;
+        }
         $renderer = $PAGE->get_renderer('core');
         return $renderer->render_from_template('local_notebook/notebookbutton', []);
+    }
+
+    /**
+     * Verify if we can display the notebook for current page.
+     */
+    public static function has_to_display_notebook() {
+        global $PAGE;
+        if (in_array($PAGE->pagelayout,
+            ['maintenance',
+            'print',
+            'secure',
+            'embedded',
+            'redirect']) || !isloggedin() || isguestuser()) {
+            // Do not try to show the notebook button in (maintenance/secure/embedded) mode,
+            // when printing, or during redirects.
+            return false;
+        }
+        return true;
     }
 }

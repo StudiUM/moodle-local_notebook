@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['cannotusenotebook'] = 'You cannot use the notebook on this page.';
 $string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
 $string['notenotfound'] = 'The note is not found.';
 $string['notecannotbeempty'] = 'The note cannot be empty.';

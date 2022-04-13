@@ -54,6 +54,7 @@ class api {
      */
     public static function add_note($note, $subject, $userid, $courseid, $coursemoduleid) {
         global $USER, $DB;
+        self::can_use_notebook();
         // Init note persistence.
         $notebook = new \local_notebook\post();
         if ($courseid) {
@@ -130,6 +131,7 @@ class api {
      */
     public static function delete_note($noteid) {
         global $USER, $DB;
+        self::can_use_notebook();
         // Init note persistence.
         $notebook = new \local_notebook\post($noteid);
         if (!$notebook->get('id')) {
@@ -168,6 +170,7 @@ class api {
      */
     public static function update_note($noteid, $note, $subject) {
         global $USER, $DB;
+        self::can_use_notebook();
         // Init note persistence.
         $notebook = new \local_notebook\post($noteid);
         if (!$notebook->get('id')) {
@@ -219,6 +222,7 @@ class api {
      */
     public static function notes_list($userid, $courseid, $coursemoduleid) {
         global $USER, $DB;
+        self::can_use_notebook();
         $params = [];
         if ($courseid && $userid == 0) {
             $sql = "
@@ -405,5 +409,17 @@ class api {
                 $params['userid2'] = $USER->id;
         }
         return $DB->get_recordset_sql($sql, $params);
+    }
+
+    /**
+     * Throws an exception if we can not use notebook.
+     *
+     * @return void
+     * @throws moodle_exception
+     */
+    public static function can_use_notebook() {
+        if (!\local_notebook\helper::has_to_display_notebook()) {
+            throw new moodle_exception('cannotusenotebook', 'local_notebook');
+        }
     }
 }

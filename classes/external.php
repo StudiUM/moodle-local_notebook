@@ -256,6 +256,8 @@ class external extends external_api {
         ));
 
         $output = $PAGE->get_renderer('core');
+        // Check if user can use notebook.
+        api::can_use_notebook();
         $note = new post($params['noteid']);
         if ($USER->id != $note->get('usermodified')) {
             throw new \moodle_exception('usercannotreadnote', 'local_notebook');
