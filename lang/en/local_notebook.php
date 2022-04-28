@@ -25,6 +25,7 @@
 
 $string['cannotusenotebook'] = 'You cannot use the notebook on this page.';
 $string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
+$string['displaynote'] = 'Display the note';
 $string['notenotfound'] = 'The note is not found.';
 $string['notecannotbeempty'] = 'The note cannot be empty.';
 $string['openmynotebook'] = 'Open my notebook';
@@ -37,3 +38,7 @@ $string['usercannotdeletenote'] = 'The user cannot delete the note.';
 $string['usercannotreadnote'] = 'The user cannot read the note.';
 $string['usercannotupdatenote'] = 'The user cannot update the note.';
 $string['usernotenrolledincourse'] = 'The user is not enrolled in the course.';
+$string['notetitle'] = 'Title';
+$string['notecontext'] = 'Context';
+$string['notedate'] = 'Date';
+$string['notedelete'] = 'Delete';

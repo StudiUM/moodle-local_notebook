@@ -24,7 +24,6 @@
  */
 
 namespace local_notebook;
-defined('MOODLE_INTERNAL') || die();
 
 use context_user;
 use lang_string;

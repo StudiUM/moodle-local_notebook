@@ -322,6 +322,8 @@ class external extends external_api {
             'courseid' => $courseid,
             'coursemoduleid' => $coursemoduleid,
         ));
+        $context = \context_system::instance();
+        self::validate_context($context);
 
         $output = $PAGE->get_renderer('core');
         $records = api::notes_list(

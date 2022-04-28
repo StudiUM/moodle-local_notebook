@@ -25,8 +25,6 @@
 
 namespace local_notebook\privacy;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Privacy Subsystem for local_notebook implementing null_provider.
  *

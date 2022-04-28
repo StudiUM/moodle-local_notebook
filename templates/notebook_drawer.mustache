@@ -26,7 +26,10 @@
     * All data attributes are required
 
     Context variables required for this template:
-    * none
+    * userid The user ID
+    * courseid The course ID
+    * coursemoduleid The course module ID
+
 
     Example context (json):
     {}
@@ -50,14 +53,14 @@
                 {{#pix}} i/window_close, core {{/pix}}
             </a>
         </div>
-        <div class="header-container position-relative" data-region="header-container">
-            header container
-        </div>
         <div class="body-container position-relative" data-region="body-container">
-            body container
+            {{! body container }}
+            <div id="list-note-container">
+                {{>local_notebook/notebook_table}}
+            </div>
         </div>
-        <div class="footer-container position-relative" data-region="footer-container">
-            footer container
+        <div class="footer-container position-relative"  data-region="footer-container">
+            {{! footer container }}
         </div>
     </div>
 </div>
@@ -65,6 +68,7 @@
 {{#js}}
 require(['jquery', 'local_notebook/notebook_drawer'], function($, NotebookDrawer) {
     var root = $('#notebook-drawer-{{uniqid}}');
-    NotebookDrawer.init(root);
+    NotebookDrawer.init(root, {{userid}}, {{courseid}}, {{coursemoduleid}});
 });
 {{/js}}
+

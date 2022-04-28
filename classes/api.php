@@ -15,15 +15,13 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for notebook api.
+ * Class for loading/storing competency frameworks from the DB.
  *
- * @package    local_notebook
- * @copyright  2021 Université de Montréal
- * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
+ * @package    core_competency
+ * @copyright  2015 Damyon Wiese
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_notebook;
-defined('MOODLE_INTERNAL') || die();
 
 use stdClass;
 use coding_exception;

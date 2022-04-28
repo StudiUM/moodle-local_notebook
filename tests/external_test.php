@@ -22,7 +22,7 @@
  * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
+namespace local_notebook;
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
@@ -38,7 +38,7 @@ use local_notebook\external;
  * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_notebook_external_testcase extends externallib_advanced_testcase {
+class external_test extends \externallib_advanced_testcase {
 
     /** @var stdClass $user User */
     protected $user = null;

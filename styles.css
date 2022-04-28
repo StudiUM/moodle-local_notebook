@@ -75,15 +75,21 @@
 	top: 50px;
 	right: 0;
 	height: calc(100% - 50px);
-	width: 320px;
+	width: 100%;
 	box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
 	padding: 0;
 	visibility: visible;
 	opacity: 1
+
+}
+@media (min-width: 768px) {
+    [data-region=right-hand-notebook-drawer].drawer {
+        width: 576px;
+    }
 }
 [data-region=right-hand-notebook-drawer].hidden {
 	display: block;
-	right: -320px;
+	right: -640px;
 	visibility: hidden;
 	opacity: 0;
 	transition: right 0.2s ease-in-out, visibility 0s ease-in-out 0.2s, opacity 0s ease-in-out 0.2s
@@ -97,12 +103,23 @@
 	[data-region=right-hand-notebook-drawer].drawer {
 		top: 0;
 		height: 100%;
-		z-index: 1030
+		z-index: 1031;
 	}
 	body.drawer-open-left,
 	body.drawer-open-right {
 		overflow: hidden
 	}
+}
+@media (max-width:575.98px) {
+	[data-region=right-hand-notebook-drawer] .fixed-table-pagination {
+        font-size: 0.7rem;
+    }
+    [data-region=right-hand-notebook-drawer] .fixed-table-toolbar input.form-control {
+        width: 115px;
+    }
+    [data-region=right-hand-notebook-drawer] #notebook-table tbody tr:nth-of-type(1) td .card-views {
+        margin-top: 30px;
+    }
 }
 .dir-rtl [data-region=right-hand-notebook-drawer] {
 	box-shadow: 2px 2px 4px rgba(0, 0, 0, .08)
@@ -114,6 +131,94 @@
 }
 @media (prefers-reduced-motion:reduce) {
 	[data-region=right-hand-notebook-drawer] {
-		transition: none
+		transition: none;
 	}
+}
+[data-region=right-hand-notebook-drawer] .fixed-table-body {
+	background-color: white;
+}
+[data-region=right-hand-notebook-drawer] thead {
+	background-color: #ced4da;
+}
+[data-region=right-hand-notebook-drawer] .message-app .body-container>* {
+    position: relative;
+}
+[data-region=right-hand-notebook-drawer] #remove {
+    float: left;
+    padding: .25rem .75rem;
+    margin-top: 5px;
+}
+[data-region=right-hand-notebook-drawer] .fa-sync:before {
+    content:"\f021";
+}
+[data-region=right-hand-notebook-drawer] .fa-sync-alt:before {
+    content:"\f2f1";
+}
+[data-region=header-container] {
+	vertical-align: middle;
+    text-align: center;
+}
+[data-region=body-container] div.truncate {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-container .table td {
+    padding: 0.25rem;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table span.subject {
+    max-width: 235px;
+    display: inline-block;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .context-note {
+    margin-right: 5px;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .context-note.wcn-1 {
+    max-width: 240px;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .context-note.wcn-2 {
+    max-width: 120px;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-container .table thead th .th-inner {
+    padding: 0.25rem;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .bs-bars,
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .columns,
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .search {
+    margin-bottom: 5px;
+    margin-top: 5px;
+}
+[data-region=right-hand-notebook-drawer] .fixed-table-toolbar .btn {
+    padding: 0.25rem 0.75rem;
+}
+[data-region=right-hand-notebook-drawer] .fixed-table-toolbar input.form-control {
+    height: calc(1.5em + 0.5rem + 2px);
+    padding: 0.25rem .75rem;
+}
+[data-region=right-hand-notebook-drawer] #list-note-container {
+    position: absolute;
+    right: 0;
+    left: 0;
+    top: unset;
+    bottom: 0;
+    overflow: auto;
+    padding-left: 5px;
+    padding-right: 5px;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-pagination>.pagination,
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-pagination>.pagination-detail {
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+.bi-arrow-clockwise::before {
+    content: "\f0e2";
+}
+.bi::before, [class^="bi-"]::before, [class*=" bi-"]::before {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+    text-transform: none;
+    line-height: 1;
+    vertical-align: -0.125em;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }

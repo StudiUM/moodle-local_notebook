@@ -23,8 +23,6 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
-defined('MOODLE_INTERNAL') || die();
-
 use tool_usertours\helper;
 
 /**
@@ -33,7 +31,8 @@ use tool_usertours\helper;
  * @return string HTML
  */
 function local_notebook_standard_after_main_region_html() {
-    return  \local_notebook\helper::render_notebook_drawer();
+    global $PAGE;
+    return  \local_notebook\helper::render_notebook_drawer($PAGE);
 }
 
 /**
@@ -44,6 +43,18 @@ function local_notebook_standard_after_main_region_html() {
  */
 function local_notebook_before_standard_top_of_body_html() {
     return  \local_notebook\helper::render_notebook_button();
+}
+
+/**
+ * The standard tags (meta tags, links to stylesheets and JavaScript, etc.)
+ * that should be included in the <head> tag. Designed to be called in theme
+ * layout.php files.
+ *
+ * @return string HTML fragment.
+ */
+function local_notebook_before_standard_html_head() {
+    global $PAGE;
+    $PAGE->requires->css('/local/notebook/styles/bootstrap-table.min.css');
 }
 
 

@@ -25,8 +25,6 @@
 
 namespace local_notebook\event;
 
-defined('MOODLE_INTERNAL') || die();
-
 /**
  * Class for event to be triggered when a notebook entry is created.
  *

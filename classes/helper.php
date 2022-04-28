@@ -24,7 +24,6 @@
  */
 
 namespace local_notebook;
-defined('MOODLE_INTERNAL') || die();
 
 /**
  * Notebook helper class.
@@ -42,12 +41,22 @@ class helper {
      * @return string The HTML.
      */
     public static function render_notebook_drawer() {
-        global $PAGE;
+        global $USER, $PAGE;
         if (!self::has_to_display_notebook()) {
             return;
         }
+        $courseid = 0;
+        $coursemoduleid = 0;
+        $context = $PAGE->context;
+        if ($context->contextlevel == CONTEXT_MODULE) {
+            $coursemoduleid = $context->instanceid;
+            $courseid = $PAGE->course->id;
+        } else if ($context->contextlevel == CONTEXT_COURSE) {
+            $courseid = $PAGE->course->id;
+        }
         $renderer = $PAGE->get_renderer('core');
-        return $renderer->render_from_template('local_notebook/notebook_drawer', []);
+        return $renderer->render_from_template('local_notebook/notebook_drawer',
+        ['userid' => $USER->id, 'courseid' => $courseid, 'coursemoduleid' => $coursemoduleid]);
     }
 
     /**
@@ -56,12 +65,20 @@ class helper {
      * @return string The HTML.
      */
     public static function render_notebook_button() {
-        global $PAGE;
+        global $USER, $CFG, $PAGE;
         if (!self::has_to_display_notebook()) {
             return;
         }
-        $renderer = $PAGE->get_renderer('core');
-        return $renderer->render_from_template('local_notebook/notebookbutton', []);
+        // Early bail out conditions.
+        if (empty($CFG->messaging) || !isloggedin() || isguestuser() || user_not_fully_set_up($USER) ||
+            get_user_preferences('auth_forcepasswordchange') ||
+            (!$USER->policyagreed && !is_siteadmin() &&
+                ($manager = new \core_privacy\local\sitepolicy\manager()) && $manager->is_defined())) {
+            return '';
+        } else {
+            $renderer = $PAGE->get_renderer('core');
+            return $renderer->render_from_template('local_notebook/notebookbutton', []);
+        }
     }
 
     /**

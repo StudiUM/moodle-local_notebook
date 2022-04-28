@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+namespace local_notebook;
 defined('MOODLE_INTERNAL') || die();
 global $CFG;
 
@@ -37,7 +38,7 @@ use local_notebook\helper;
  * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class local_notebook_access_testcase extends advanced_testcase {
+class access_test extends \advanced_testcase {
 
     /**
      * Test if user can use notebook in some pages.
