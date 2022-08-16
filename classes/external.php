@@ -107,8 +107,10 @@ class external extends external_api {
             'note' => $note,
             'subject' => $subject
         ));
+        $data = [];
+        parse_str($params['note'], $data);
         return api::add_note(
-            $params['note'],
+            $data['note']['text'],
             $params['subject'],
             $params['userid'],
             $params['courseid'],

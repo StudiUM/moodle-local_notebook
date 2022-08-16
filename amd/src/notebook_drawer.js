@@ -65,7 +65,12 @@ define(
             BODY_CONTAINER: '[data-region="body-container"]',
             CLOSE_BUTTON: '[data-action="closedrawer"]',
             NOTE_TABLE: '#notebook-table',
-            REFRESH_BUTTON: 'button[name="refresh"]'
+            REFRESH_BUTTON: 'button[name="refresh"]',
+            SAVE_BUTTON: '#savenote',
+            RESET_BUTTON: '#resetnote',
+            NOTE_FORM_ID: 'noteform',
+            NOTE_FORM: '[data-region="body-container"] #noteform',
+            MESSAGE_SUCCESS_CONTAINER: '[data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon'
         };
         var Events = {
             SHOW: 'notebook-drawer-show',
@@ -99,6 +104,28 @@ define(
         var refreshNotes = function () {
             this.$table.bootstrapTable('destroy');
             displayNotes();
+        };
+
+        /**
+         * Resize editor.
+         *
+         */
+        var resizeEditor = function () {
+            let heightcontainer = $(SELECTORS.BODY_CONTAINER).outerHeight(true);
+            let heightlistnote = $(SELECTORS.BODY_CONTAINER + " #list-note-container").outerHeight(true);
+            let heightsubject = $(SELECTORS.BODY_CONTAINER + " #fitem_id_subject").outerHeight(true);
+            let heightbutton = $(SELECTORS.BODY_CONTAINER + " [data-region='footer']").outerHeight(true);
+            let heighttoolbareditor = $(SELECTORS.BODY_CONTAINER + " [role='toolbar']").outerHeight(true);
+            let margin = 40;
+            let heighteditor = heightcontainer - heightlistnote - heightsubject - heightbutton - heighttoolbareditor - margin;
+            if (heighteditor < 100) {
+                heighteditor = 100;
+            }
+
+            $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").css( {
+                "min-height" : heighteditor + "px",
+                "height" : heighteditor + "px",
+            });
         };
 
         /**
@@ -139,10 +166,10 @@ define(
                 let box = document.querySelector('[data-region="right-hand-notebook-drawer"]');
                 let height = box.offsetHeight;
                 let tableheight = 460;
-                if (height < 700) {
-                    tableheight = 350;
-                } else if (height < 600) {
+                if (height < 800) {
                     tableheight = 300;
+                } else if (height < 600) {
+                    tableheight = 250;
                 }
 
                 let data = [];
@@ -192,7 +219,11 @@ define(
                                 align: 'center',
                                 formatter: operateFormatter
                             }]
-                        ]
+                        ],
+                        onPostBody: function() {
+                            // Resize editor to the wright height.
+                            resizeEditor();
+                        }
                     });
 
                     /**
@@ -298,6 +329,94 @@ define(
         };
 
         /**
+         * Submit form ajax.
+         *
+         */
+        var submitFormAjax = () => {
+            if ($(document.activeElement).data('action') == 'reset') {
+                resetNoteForm();
+            } else {
+                let args = {};
+                args.userid = this.userid;
+                args.courseid = this.courseid;
+                args.coursemoduleid = this.coursemoduleid;
+                args.subject = $(SELECTORS.NOTE_FORM +' input[name="subject"]').val();
+                args.note = $(SELECTORS.NOTE_FORM).serialize();
+                ajax.call([{
+                    methodname: 'local_notebook_add_note',
+                    args: args,
+                    done: function(result) {
+                        if (!result.error) {
+                            // Display success message.
+                            displayMessageSuccess();
+                            // Refresh list.
+                            refreshNotes();
+                        }
+                    },
+                    fail: notification.exception
+                }]);
+            }
+            return false;
+        };
+
+        /**
+         * Reset form.
+         *
+         */
+        var resetNoteForm = () => {
+            $(SELECTORS.NOTE_FORM +' input[name="subject"]').val($(SELECTORS.NOTE_FORM +' input[name="subjectorigin"]').val());
+            $(SELECTORS.NOTE_FORM + ' textarea').val('');
+            $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html('');
+            $(SELECTORS.NOTE_FORM + ' textarea').trigger('change');
+            // Remove message success if exist.
+            $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html('');
+
+        };
+
+        /**
+         * Display message success.
+         *
+         */
+        var displayMessageSuccess = () => {
+            // Remove old message.
+            $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html('');
+            var stringkeys = [
+                {
+                    key: 'notesaved',
+                    component: 'local_notebook'
+                },
+                {
+                    key: 'close',
+                    component: 'core'
+                }
+            ];
+
+            str.get_strings(stringkeys).then(function(langStrings) {
+                let messageHtml = '<div class="alert alert-success alert-block fade in " role="alert">' +
+                '<button type="button" class="close" data-dismiss="alert" aria-label="' + langStrings[1] + '">×</button>' +
+                langStrings[0] + '</div>';
+                $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html(messageHtml);
+            });
+        };
+
+        /**
+         * Toggle save button.
+         *
+         */
+        var toggleSaveButton = () => {
+            let editorcontent = $(SELECTORS.NOTE_FORM + ' textarea').val();
+            let emptyeditor = false;
+            if (editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0 && !editorcontent.includes("<img")) {
+                emptyeditor = true;
+            }
+            if ($(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '' || emptyeditor) {
+                $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', true);
+            } else {
+                $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', false);
+            }
+        };
+
+        /**
          * Listen to showing and hiding the notebook drawer.
          *
          * @param {Object} root The notebook drawer container.
@@ -326,6 +445,13 @@ define(
                 if (isVisible(root)) {
                     hide(root);
                     $(SELECTORS.JUMPTO).attr('tabindex', -1);
+                    // Load formchangechecker module.
+                    Y.use('moodle-core-formchangechecker', () => {
+                        M.core_formchangechecker.init({formid: SELECTORS.NOTE_FORM_ID});
+                    });
+                    Y.use('moodle-core-formchangechecker', function() {
+                        M.core_formchangechecker.reset_form_dirty_state();
+                    });
                 } else {
                     show(root);
                     setJumpFrom(buttonid);
@@ -371,6 +497,13 @@ define(
                     }
                 }
             });
+
+            $(SELECTORS.BODY_CONTAINER).on('submit', 'form', submitFormAjax);
+
+            // Enable/disbled save button.
+            toggleSaveButton();
+            $(SELECTORS.BODY_CONTAINER + ' form input[type="text"]').on('input', toggleSaveButton);
+            $(SELECTORS.BODY_CONTAINER + ' form textarea').on('change', toggleSaveButton);
         };
 
         /**

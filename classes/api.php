@@ -15,10 +15,11 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Class for loading/storing competency frameworks from the DB.
+ * Class for loading/storing note from the DB.
  *
- * @package    core_competency
- * @copyright  2015 Damyon Wiese
+ * @package    local_notebook
+ * @copyright  2021 Université de Montréal
+ * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 namespace local_notebook;

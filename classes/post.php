@@ -42,6 +42,12 @@ class post extends persistent {
     /** The table name. */
     const TABLE = 'post';
 
+    /** The module name. */
+    const MODULE = 'notebook';
+
+    /** Publish state */
+    const PUBLISHSTATE = 'site';
+
     /**
      * Return the definition of the properties of this model.
      *
@@ -83,11 +89,11 @@ class post extends persistent {
             ),
             'module' => array(
                 'type' => PARAM_TEXT,
-                'default' => 'notebook'
+                'default' => self::MODULE
             ),
             'publishstate' => array(
                 'type' => PARAM_TEXT,
-                'default' => 'site'
+                'default' => self::PUBLISHSTATE
             ),
             'subject' => array(
                 'type' => PARAM_TEXT,
