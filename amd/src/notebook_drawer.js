@@ -175,9 +175,12 @@ define(
                 let data = [];
                 promises[0].done(function (result) {
                     $.each(result, function (index, value) {
+                        let subject = {};
+                        subject.text = value.subject;
+                        subject.tags = value.tags;
                         data.push({
                             'id': value.id,
-                            'subject': value.subject,
+                            'subject': subject,
                             'contextname': value.contextname,
                             'created': value.created
                         });
@@ -245,23 +248,17 @@ define(
                      * Format subject.
                      *
                      * @param {String} value
-                     * @param {Object} row
-                     * @param {Integer} index
                      * @return {String}
                      */
-                    function subjectFormatter(value, row, index) {
+                    function subjectFormatter(value) {
                         // To implet when doing tags.
-                        var nbclass = index % 2 === 0 ? 'wcn-1' : 'wcn-2';
-                        var td = "<span class='text-truncate subject'>" + value + "</span><br>";
-                        if (index % 2 === 0) {
-                            td += '<span class="badge badge-info text-truncate context-note ' +
-                            nbclass + '">Demo course competencies FTFT-4647</span>';
-                        } else {
-                            td += '<span class="badge badge-info text-truncate context-note ' +
-                             nbclass + '">Demo course competencies FTFT-4647</span>';
-                            td += '<span class="badge badge-info text-truncate context-note ' +
-                             nbclass + '">Profil Issam Taboubi</span>';
-                        }
+                        let nbtags = value.tags.length;
+                        var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
+                        var nbclass = nbtags === 1 ? 'wcn-1' : 'wcn-2';
+                        value.tags.forEach(function(item) {
+                            td += '<span class="badge badge-info text-truncate context-note ' + nbclass
+                                + '"><a title="' + item.title + '" href="' + item.url + '">' + item.title + '</a></span>';
+                        });
                         return td;
                     }
 
