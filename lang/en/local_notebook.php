@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['backtolist'] = 'Back to notes list';
 $string['cannotusenotebook'] = 'You cannot use the notebook on this page.';
 $string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
 $string['displaynote'] = 'Display the note';

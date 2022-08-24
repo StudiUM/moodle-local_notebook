@@ -107,10 +107,14 @@ class external extends external_api {
             'note' => $note,
             'subject' => $subject
         ));
-        $data = [];
+        $note = $params['note'];
         parse_str($params['note'], $data);
+        if (is_array($data) && isset($data['note'])) {
+            $note = $data['note']['text'];
+        }
+
         return api::add_note(
-            $data['note']['text'],
+            $note,
             $params['subject'],
             $params['userid'],
             $params['courseid'],
@@ -256,17 +260,12 @@ class external extends external_api {
         $params = self::validate_parameters(self::read_note_parameters(), array(
             'noteid' => $noteid
         ));
-
+        $context = \context_system::instance();
+        self::validate_context($context);
         $output = $PAGE->get_renderer('core');
-        // Check if user can use notebook.
-        api::can_use_notebook();
-        $note = new post($params['noteid']);
-        if ($USER->id != $note->get('usermodified')) {
-            throw new \moodle_exception('usercannotreadnote', 'local_notebook');
-        }
+        $note = api::read_note($params['noteid']);
         $exporter = new \local_notebook\external\notebook_exporter($note, array('context' => context_system::instance()));
         $record = $exporter->export($output);
-
         return $record;
     }
 
@@ -350,6 +349,45 @@ class external extends external_api {
      */
     public static function notes_list_returns() {
         return new external_multiple_structure(\local_notebook\external\notebook_exporter::get_read_structure());
+    }
+
+    /**
+     * Returns description of note_viewed() parameters.
+     *
+     * @return \external_function_parameters
+     */
+    public static function note_viewed_parameters() {
+        $id = new external_value(
+            PARAM_INT,
+            'The note id',
+            VALUE_REQUIRED
+        );
+        $params = array(
+            'id' => $id
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Log event note viewed.
+     *
+     * @param int $id The note ID.
+     * @return boolean
+     */
+    public static function note_viewed($id) {
+        $params = self::validate_parameters(self::note_viewed_parameters(), array(
+            'id' => $id
+        ));
+        return api::note_viewed($params['id']);
+    }
+
+    /**
+     * Returns description of note_viewed() result value.
+     *
+     * @return \external_description
+     */
+    public static function note_viewed_returns() {
+        return new external_value(PARAM_BOOL, 'True if the event note viewed was logged');
     }
 
 }

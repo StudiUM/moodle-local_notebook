@@ -390,7 +390,7 @@ class external_test extends \externallib_advanced_testcase {
         // Test add note in site level.
         $noteid = external::add_note('<p>My note</p>', 'My subject', 0, 0, 0);
         $result = external::read_note($noteid);
-        $result = (object) external_api::clean_returnvalue(external::read_note_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_note_returns(), $result);
         $this->assertEquals(get_string('site'), $result->contextname);
         $this->assertEquals($noteid, $result->id);
         $this->assertEquals(0, $result->userid);
@@ -403,7 +403,7 @@ class external_test extends \externallib_advanced_testcase {
         // Test add note for user in site level.
         $noteid = external::add_note('<p>My note for user</p>', 'My subject for user', $this->user->id, 0, 0);
         $result = external::read_note($noteid);
-        $result = (object) external_api::clean_returnvalue(external::read_note_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_note_returns(), $result);
         $this->assertEquals(get_string('profile'), $result->contextname);
         $this->assertEquals($noteid, $result->id);
         $this->assertEquals($this->user->id, $result->userid);
@@ -421,7 +421,7 @@ class external_test extends \externallib_advanced_testcase {
         $noteid = external::add_note('<p>My note for user in course</p>', 'My subject for user in course',
             $this->student2->id, $this->course->id, 0);
         $result = external::read_note($noteid);
-        $result = (object) external_api::clean_returnvalue(external::read_note_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_note_returns(), $result);
         $this->assertEquals(get_string('profile'), $result->contextname);
         $this->assertEquals($this->student2->id, $result->userid);
         $this->assertEquals($noteid, $result->id);
@@ -438,7 +438,7 @@ class external_test extends \externallib_advanced_testcase {
         // Test add note in the course.
         $noteid = external::add_note('<p>My note in course</p>', 'My subject in course', 0, $this->course->id, 0);
         $result = external::read_note($noteid);
-        $result = (object) external_api::clean_returnvalue(external::read_note_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_note_returns(), $result);
         $this->assertEquals(get_string('course'), $result->contextname);
         $this->assertEquals(0, $result->userid);
         $this->assertEquals($noteid, $result->id);
@@ -454,7 +454,7 @@ class external_test extends \externallib_advanced_testcase {
         $noteid = external::add_note('<p>My note in course module</p>', 'My subject in course module', 0,
             $this->course->id, $this->cm->id);
         $result = external::read_note($noteid);
-        $result = (object) external_api::clean_returnvalue(external::read_note_returns(), $result);
+        $result = (object) \external_api::clean_returnvalue(external::read_note_returns(), $result);
         $this->assertEquals(get_string('activity'), $result->contextname);
         $this->assertEquals(0, $result->userid);
         $this->assertEquals($noteid, $result->id);
@@ -501,7 +501,7 @@ class external_test extends \externallib_advanced_testcase {
         // Get notes in site level.
         $this->setUser($this->student);
         $result = external::notes_list(0, 0, 0);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid1, $r1['id']);
@@ -522,7 +522,7 @@ class external_test extends \externallib_advanced_testcase {
 
         // Test for user in site level.
         $result = external::notes_list($this->user->id, 0, 0);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid2, $r1['id']);
@@ -543,7 +543,7 @@ class external_test extends \externallib_advanced_testcase {
 
         // Test for user in course.
         $result = external::notes_list($this->student2->id, $this->course->id, 0);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid4, $r1['id']);
@@ -564,7 +564,7 @@ class external_test extends \externallib_advanced_testcase {
 
         // If no note found for user in site level, so find other users DESC.
         $result = external::notes_list($this->student->id, 0, 0);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid4, $r1['id']);
@@ -585,7 +585,7 @@ class external_test extends \externallib_advanced_testcase {
 
         // Test note in the course, find the notes in course and then in others courses.
         $result = external::notes_list(0, $this->course->id, 0);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid5, $r1['id']);
@@ -608,7 +608,7 @@ class external_test extends \externallib_advanced_testcase {
         // Then the course modules in the same course.
         // Then the other course modules in other courses.
         $result = external::notes_list(0, 0, $this->cm->id);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid7, $r1['id']);
@@ -629,7 +629,7 @@ class external_test extends \externallib_advanced_testcase {
 
         // Get notes for course module cm3.
         $result = external::notes_list(0, 0, $this->cm3->id);
-        $result = external_api::clean_returnvalue(external::notes_list_returns(), $result);
+        $result = \external_api::clean_returnvalue(external::notes_list_returns(), $result);
         $this->assertCount(8, $result);
         $r1 = $result[0];
         $this->assertEquals($noteid8, $r1['id']);

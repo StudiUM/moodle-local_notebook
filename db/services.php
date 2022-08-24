@@ -65,6 +65,14 @@ $functions = array(
         'description'  => 'Delete notes in notebook',
         'type'         => 'write',
         'ajax'         => true,
-    )
+    ),
+    'local_notebook_note_viewed' => array(
+        'classname'    => 'local_notebook\external',
+        'methodname'   => 'note_viewed',
+        'classpath'    => '',
+        'description'  => 'Note viewed event',
+        'type'         => 'read',
+        'ajax'         => true,
+    ),
 );
 

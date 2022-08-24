@@ -121,6 +121,59 @@ class api {
         }
         return $notebook->get('id');
     }
+    /**
+     * Read note.
+     *
+     * @param post|int $noteorid The note object or the note id
+     * @return post
+     */
+    public static function read_note($noteorid) {
+        global $USER;
+        // Check if user can use notebook.
+        self::can_use_notebook();
+        $note = $noteorid;
+        if (!is_object($note)) {
+            $note = new post($noteorid);
+        }
+
+        if ($USER->id != $note->get('usermodified')) {
+            throw new \moodle_exception('usercannotreadnote', 'local_notebook');
+        }
+        return $note;
+    }
+
+    /**
+     * Log the note viewed event.
+     *
+     * @param post|int $noteorid The note object or note id
+     * @return bool
+     */
+    public static function note_viewed($noteorid) {
+        global $USER;
+        // Check if user can use notebook.
+        self::can_use_notebook();
+        $note = $noteorid;
+        if (!is_object($note)) {
+            $note = new post($noteorid);
+        }
+
+        if ($USER->id != $note->get('usermodified')) {
+            throw new \moodle_exception('usercannotreadnote', 'local_notebook');
+        }
+        // Trigger event.
+        if ($note->get('courseid')) {
+            $context = context_course::instance($note->get('courseid'));
+        } else {
+            $context = context_system::instance();
+        }
+        $event = \local_notebook\event\notebook_viewed::create(array(
+            'objectid' => $note->get('id'),
+            'userid' => $USER->id,
+            'context' => $context
+        ));
+        $event->trigger();
+        return true;
+    }
 
     /**
      * Delete a note.

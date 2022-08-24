@@ -44,6 +44,7 @@ define(
         'core/notification',
         'core/str',
         'core/ajax',
+        'core/templates',
         'bootstrapTable',
         'bootstrapTableLocale',
         'bootstrapTableLocaleMobile',
@@ -55,7 +56,8 @@ define(
         PubSub,
         notification,
         str,
-        ajax
+        ajax,
+        Templates
     ) {
 
         var SELECTORS = {
@@ -63,13 +65,23 @@ define(
             DRAWER: '[data-region="right-hand-notebook-drawer"]',
             HEADER_CONTAINER: '[data-region="header-container"]',
             BODY_CONTAINER: '[data-region="body-container"]',
+            BODY_LIST: '[data-region="view-overview"]',
             CLOSE_BUTTON: '[data-action="closedrawer"]',
             NOTE_TABLE: '#notebook-table',
             REFRESH_BUTTON: 'button[name="refresh"]',
             SAVE_BUTTON: '#savenote',
             RESET_BUTTON: '#resetnote',
             NOTE_FORM_ID: 'noteform',
+            VIEW_NOTE: '[data-region="body-container"] #notebook-table .viewnote',
+            BACK_TO_LIST: '[data-region="header-container"] .backtolist',
+            NOTE_VIEW: '[data-region="body-container"] [data-region="view-note"]',
+            FOOTER_NOTE_VIEW: '[data-region="footer-container"] [data-region="view-note"]',
+            HEADER_NOTE_VIEW: '[data-region="header-container"] [data-region="view-note"]',
+            HEADER_NOTE_DATE: '[data-region="header-container"] .notedate',
             NOTE_FORM: '[data-region="body-container"] #noteform',
+            FOOTER_NOTE_DELETE: '[data-region="footer-container"] .deletenote',
+            FOOTER_NOTE_EDIT: '[data-region="footer-container"] .editnote',
+            FOOTER_NOTE_TAGS: '[data-region="footer-container"] .notetags',
             MESSAGE_SUCCESS_CONTAINER: '[data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon'
         };
         var Events = {
@@ -104,6 +116,98 @@ define(
         var refreshNotes = function () {
             this.$table.bootstrapTable('destroy');
             displayNotes();
+        };
+
+        /**
+         * Get formatted tags.
+         *
+         * @param {Array.<Object>} tags
+         * @return {String} return tags html
+         */
+        var getFormattedTags = function(tags) {
+            var tagshtml = '';
+
+            tags.forEach(function(item) {
+                tagshtml += '<span class="badge badge-info text-truncate context-note">'
+                    + '<a title="' + item.title + '" href="' + item.url + '">' + item.title + '</a></span>';
+            });
+
+            return tagshtml;
+        };
+
+        /**
+         * Add blur note content.
+         *
+         */
+        var addBlurContent = function () {
+            let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_DATE + ', ' + SELECTORS.NOTE_VIEW;
+            $(selectors).addClass('blur-content');
+        };
+
+        /**
+         * Remove blur note content.
+         *
+         */
+        var removeBlurContent = function () {
+            let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_DATE + ', ' + SELECTORS.NOTE_VIEW;
+            $(selectors).removeClass('blur-content');
+        };
+
+        /**
+         * Display note.
+         *
+         * @param {String} noteid The note id
+         */
+        var displayNote = function (noteid) {
+            var promises = [];
+            displayNoteView();
+            addBlurContent();
+
+            promises = ajax.call([{
+                methodname: 'local_notebook_read_note',
+                args: {
+                    noteid: noteid
+                }
+            },
+            {
+                methodname: 'local_notebook_note_viewed',
+                args: {
+                    id: noteid
+                }
+            }]);
+            promises[0].done(function (result) {
+                let data = {};
+                data.subject = result.subject;
+                data.summary = result.summary;
+                let timestamp = result.created * 1000;
+                let datecreation = new Date(timestamp).toLocaleDateString(document.documentElement.lang, {
+                    day : 'numeric',
+                    month : 'short',
+                    year : 'numeric'
+                });
+                let timecreation = new Date(timestamp).toLocaleTimeString(document.documentElement.lang);
+                Templates.render('local_notebook/note_content', data)
+                .then(function(html) {
+                    // Display content.
+                    $(SELECTORS.NOTE_VIEW).html(html);
+                    // Display date.
+                    $(SELECTORS.HEADER_NOTE_DATE).html(datecreation + ' ' + timecreation);
+                    // Set buttons.
+                    $(SELECTORS.FOOTER_NOTE_DELETE).data('noteid', result.id);
+                    $(SELECTORS.FOOTER_NOTE_EDIT).data('noteid', result.id);
+                    // Set tags.
+                    $(SELECTORS.FOOTER_NOTE_TAGS).html(getFormattedTags(result.tags));
+                    // Remove blur content.
+                    removeBlurContent();
+                    // Set focus on button back to list.
+                    $(SELECTORS.BACK_TO_LIST).data('noteid', result.id);
+                    $(SELECTORS.BACK_TO_LIST).focus();
+                    // Log viewed event.
+                    promises[1].done(function () {}).fail(Notification.exception);
+                    return;
+                })
+                .fail(Notification.exception);
+            }).fail(Notification.exception);
         };
 
         /**
@@ -251,7 +355,6 @@ define(
                      * @return {String}
                      */
                     function subjectFormatter(value) {
-                        // To implet when doing tags.
                         let nbtags = value.tags.length;
                         var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
                         var nbclass = nbtags === 1 ? 'wcn-1' : 'wcn-2';
@@ -265,11 +368,13 @@ define(
                     /**
                      * Display note button.
                      *
+                     * @param {String} value
+                     * @param {Object} row
                      */
-                    function operateFormatter() {
+                    function operateFormatter(value, row) {
                         return [
-                            '<a class="edit" title="' + langStrings[3] + '">',
-                            '<i class="fa fa-chevron-right"></i>',
+                            '<a class="viewnote" data-noteid="' + row.id + '" href="#" title="' + langStrings[3] + '">',
+                            '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
                             '</a>'
                         ].join('');
                     }
@@ -368,6 +473,38 @@ define(
             // Remove message success if exist.
             $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html('');
 
+        };
+
+        /**
+         * Hide note view.
+         *
+         * @param {String} noteid
+         */
+        var hideNoteView = (noteid) => {
+            $(SELECTORS.HEADER_NOTE_VIEW).addClass('hidden');
+            $(SELECTORS.HEADER_NOTE_VIEW).attr('aria-hidden', true);
+            $(SELECTORS.FOOTER_NOTE_VIEW).addClass('hidden');
+            $(SELECTORS.FOOTER_NOTE_VIEW).attr('aria-hidden', true);
+            $(SELECTORS.NOTE_VIEW).addClass('hidden');
+            $(SELECTORS.NOTE_VIEW).attr('aria-hidden', true);
+            $(SELECTORS.BODY_LIST).removeClass('hidden');
+            $(SELECTORS.BODY_LIST).removeAttr('aria-hidden');
+            // Set focus back to last item clicked.
+            $(SELECTORS.VIEW_NOTE + '[data-noteid="' + noteid + '"]').focus();
+        };
+
+        /**
+         * Hide note view.
+         */
+        var displayNoteView = () => {
+            $(SELECTORS.HEADER_NOTE_VIEW).removeClass('hidden');
+            $(SELECTORS.HEADER_NOTE_VIEW).removeAttr('aria-hidden');
+            $(SELECTORS.FOOTER_NOTE_VIEW).removeClass('hidden');
+            $(SELECTORS.FOOTER_NOTE_VIEW).removeAttr('aria-hidden');
+            $(SELECTORS.NOTE_VIEW).removeClass('hidden');
+            $(SELECTORS.NOTE_VIEW).removeAttr('aria-hidden');
+            $(SELECTORS.BODY_LIST).addClass('hidden');
+            $(SELECTORS.BODY_LIST).attr('aria-hidden', true);
         };
 
         /**
@@ -480,6 +617,15 @@ define(
                     $('#' + button).focus();
                 }
                 PubSub.publish(Events.TOGGLE_VISIBILITY);
+            });
+
+            // Back to list.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.BACK_TO_LIST, function () {
+                hideNoteView($(this).data('noteid'));
+            });
+            // View note.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.VIEW_NOTE, function () {
+                displayNote($(this).data('noteid'));
             });
 
             // If notebook drawer is visible and we open message drawer, hide notebook.
