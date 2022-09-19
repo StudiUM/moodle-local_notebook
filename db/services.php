@@ -50,6 +50,14 @@ $functions = array(
         'type'         => 'write',
         'ajax'         => true,
     ),
+    'local_notebook_get_form_subject' => array(
+        'classname'    => 'local_notebook\external',
+        'methodname'   => 'get_form_subject',
+        'classpath'    => '',
+        'description'  => 'Get form subject for a note',
+        'type'         => 'read',
+        'ajax'         => true,
+    ),
     'local_notebook_notes_list' => array(
         'classname'    => 'local_notebook\external',
         'methodname'   => 'notes_list',

@@ -60,6 +60,7 @@
             {{! body container }}
             <div class="view-note h-100 hidden bg-white" data-region="view-note">
             </div>
+            
             <div class="h-100 view-overview-body" data-region="view-overview">
                 <div id="add-note-form-container">
                     {{{form}}}
@@ -72,6 +73,9 @@
         <div class="footer-container position-relative"  data-region="footer-container">
             {{! footer container }}
             {{>local_notebook/notebook_drawer_view_note_footer}}
+        </div>
+        <div class="p-4 w-100 h-100 hidden position-absolute z-index-1" data-region="confirm-dialogue-container">
+            {{> local_notebook/note_confirm_delete_dialogue }}
         </div>
     </div>
 </div>

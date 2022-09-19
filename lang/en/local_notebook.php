@@ -25,6 +25,8 @@
 
 $string['backtolist'] = 'Back to notes list';
 $string['cannotusenotebook'] = 'You cannot use the notebook on this page.';
+$string['confirmdeletemultiplenotes'] = 'Are you sure you would like to delete the selected notes?';
+$string['confirmdeletesinglenote'] = 'Are you sure you would like to delete this note?';
 $string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
 $string['displaynote'] = 'Display the note';
 $string['formrequiredfields'] = 'The subject and content fields of the note are mandatory';
@@ -33,7 +35,8 @@ $string['notecannotbeempty'] = 'The note cannot be empty.';
 $string['notecontent'] = 'Note content';
 $string['notecontext'] = 'Context';
 $string['notedate'] = 'Date';
-$string['notedelete'] = 'Delete';
+$string['notedeleted'] = 'Your note has been deleted.';
+$string['notedeletedmultiple'] = 'The notes selected has been deleted.';
 $string['noteforcourse'] = 'Note {$a->count} of the course {$a->name}';
 $string['noteforcoursemodule'] = 'Note {$a->count} of the activity {$a->name}';
 $string['noteforsite'] = 'Note {$a->count}';

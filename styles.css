@@ -296,3 +296,7 @@
     padding-right: 0;
     justify-content: end;
 }
+[data-region=right-hand-notebook-drawer] [data-region="confirm-dialogue-container"] {
+    top: 0;
+    background: rgba(0,0,0,0.3);
+}

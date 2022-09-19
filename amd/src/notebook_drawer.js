@@ -48,8 +48,7 @@ define(
         'bootstrapTable',
         'bootstrapTableLocale',
         'bootstrapTableLocaleMobile',
-    ],
-    function (
+    ], function(
         $,
         CustomEvents,
         Drawer,
@@ -82,7 +81,20 @@ define(
             FOOTER_NOTE_DELETE: '[data-region="footer-container"] .deletenote',
             FOOTER_NOTE_EDIT: '[data-region="footer-container"] .editnote',
             FOOTER_NOTE_TAGS: '[data-region="footer-container"] .notetags',
-            MESSAGE_SUCCESS_CONTAINER: '[data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon'
+            MESSAGE_SUCCESS_CONTAINER: '[data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon',
+            DIALOGUE_CONTAINER: '[data-region="right-hand-notebook-drawer"] [data-region="confirm-dialogue-container"]',
+            CONFIRM_TEXT_MULTI: '[data-region="right-hand-notebook-drawer"] [data-region="confirm-dialogue-container"] ' +
+                '.multiplenotes',
+            CONFIRM_TEXT_SINGLE: '[data-region="right-hand-notebook-drawer"] [data-region="confirm-dialogue-container"] ' +
+                '.singlenote',
+            CONFIRM_DELETE_BUTTON_MULTI: '[data-region="confirm-dialogue-container"] [data-action="confirm-delete-multiple"]',
+            CONFIRM_DELETE_BUTTON_SINGLE: '[data-region="confirm-dialogue-container"] [data-action="confirm-delete-single"]',
+            CANCEL_DELETE_BUTTON_MULTI: '[data-region="confirm-dialogue-container"] [data-action="cancel-delete-multiple"]',
+            CANCEL_DELETE_BUTTON_SINGLE: '[data-region="confirm-dialogue-container"] [data-action="cancel-delete-single"]',
+            DELETE_NOTE_BUTTON: '.deletenote',
+            CHECKBOX_LIST_NOTE: '[name="btSelectItem"]',
+            CHECKBOX_ALL_NOTE: '[name="btSelectAll"]',
+            TABLE_DELETE_BUTTON: '[data-region="body-container"] #remove'
         };
         var Events = {
             SHOW: 'notebook-drawer-show',
@@ -96,7 +108,7 @@ define(
          *
          * @param {Object} root The notebook drawer container.
          */
-        var show = function (root) {
+        var show = (root) => {
             if (!root.attr('data-shown')) {
                 root.attr('data-shown', true);
             }
@@ -113,7 +125,7 @@ define(
          * Refresh notes.
          *
          */
-        var refreshNotes = function () {
+        var refreshNotes = () => {
             this.$table.bootstrapTable('destroy');
             displayNotes();
         };
@@ -124,7 +136,7 @@ define(
          * @param {Array.<Object>} tags
          * @return {String} return tags html
          */
-        var getFormattedTags = function(tags) {
+        var getFormattedTags = (tags) => {
             var tagshtml = '';
 
             tags.forEach(function(item) {
@@ -139,7 +151,7 @@ define(
          * Add blur note content.
          *
          */
-        var addBlurContent = function () {
+        var addBlurContent = () => {
             let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_DATE + ', ' + SELECTORS.NOTE_VIEW;
             $(selectors).addClass('blur-content');
         };
@@ -148,7 +160,7 @@ define(
          * Remove blur note content.
          *
          */
-        var removeBlurContent = function () {
+        var removeBlurContent = () => {
             let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_DATE + ', ' + SELECTORS.NOTE_VIEW;
             $(selectors).removeClass('blur-content');
         };
@@ -158,7 +170,7 @@ define(
          *
          * @param {String} noteid The note id
          */
-        var displayNote = function (noteid) {
+        var displayNote = (noteid) => {
             var promises = [];
             displayNoteView();
             addBlurContent();
@@ -214,7 +226,7 @@ define(
          * Resize editor.
          *
          */
-        var resizeEditor = function () {
+        var resizeEditor = () => {
             let heightcontainer = $(SELECTORS.BODY_CONTAINER).outerHeight(true);
             let heightlistnote = $(SELECTORS.BODY_CONTAINER + " #list-note-container").outerHeight(true);
             let heightsubject = $(SELECTORS.BODY_CONTAINER + " #fitem_id_subject").outerHeight(true);
@@ -236,7 +248,7 @@ define(
          * Display notes.
          *
          */
-        var displayNotes = function () {
+        var displayNotes = () => {
             var promises = [];
 
             promises = ajax.call([{
@@ -306,7 +318,17 @@ define(
                                 title: langStrings[0],
                                 sortable: true,
                                 width: 300,
-                                formatter: subjectFormatter,
+                                formatter: function(value) {
+                                    let nbtags = value.tags.length;
+                                    var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
+                                    var nbclass = nbtags === 1 ? 'wcn-1' : 'wcn-2';
+                                    value.tags.forEach(function(item) {
+                                        td += '<span class="badge badge-info text-truncate context-note ' + nbclass
+                                            + '"><a title="' + item.title + '" href="' + item.url + '">'
+                                            + item.title + '</a></span>';
+                                    });
+                                    return td;
+                                }
                             },
                             {
                                 field: 'contextname',
@@ -317,14 +339,27 @@ define(
                                 field: 'created',
                                 title: langStrings[2],
                                 sortable: true,
-                                formatter: dateFormatter,
+                                formatter: function(value) {
+                                    var today = new Date(value * 1000).toLocaleDateString(document.documentElement.lang, {
+                                        day : 'numeric',
+                                        month : 'short',
+                                        year : 'numeric'
+                                    });
+                                    return today;
+                                },
                                 width: 110
                             },
                             {
                                 field: 'operate',
                                 title: '',
                                 align: 'center',
-                                formatter: operateFormatter
+                                formatter: function(value, row) {
+                                    return [
+                                        '<a class="viewnote" data-noteid="' + row.id + '" href="#" title="' + langStrings[3] + '">',
+                                        '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
+                                        '</a>'
+                                    ].join('');
+                                }
                             }]
                         ],
                         onPostBody: function() {
@@ -332,56 +367,58 @@ define(
                             resizeEditor();
                         }
                     });
-
-                    /**
-                     * Format date.
-                     *
-                     * @param {String} value
-                     * @return {String}
-                     */
-                    function dateFormatter(value) {
-                        var today = new Date(value * 1000).toLocaleDateString(document.documentElement.lang, {
-                            day : 'numeric',
-                            month : 'short',
-                            year : 'numeric'
-                        });
-                        return today;
-                    }
-
-                    /**
-                     * Format subject.
-                     *
-                     * @param {String} value
-                     * @return {String}
-                     */
-                    function subjectFormatter(value) {
-                        let nbtags = value.tags.length;
-                        var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
-                        var nbclass = nbtags === 1 ? 'wcn-1' : 'wcn-2';
-                        value.tags.forEach(function(item) {
-                            td += '<span class="badge badge-info text-truncate context-note ' + nbclass
-                                + '"><a title="' + item.title + '" href="' + item.url + '">' + item.title + '</a></span>';
-                        });
-                        return td;
-                    }
-
-                    /**
-                     * Display note button.
-                     *
-                     * @param {String} value
-                     * @param {Object} row
-                     */
-                    function operateFormatter(value, row) {
-                        return [
-                            '<a class="viewnote" data-noteid="' + row.id + '" href="#" title="' + langStrings[3] + '">',
-                            '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
-                            '</a>'
-                        ].join('');
-                    }
-
                 }).fail(notification.exception);
             }).fail(Notification.exception);
 
+        };
+
+        /**
+         * Close the confirm delete dialogue..
+         *
+         * @param {String} action The action type of cancel.
+         * @param {Boolean} focus
+         */
+        var closeConfirmDialogue = (action, focus) => {
+            $(SELECTORS.DIALOGUE_CONTAINER).addClass('hidden');
+            if (!focus) {
+                return;
+            }
+            if (action === 'multiple') {
+                $(SELECTORS.TABLE_DELETE_BUTTON).focus();
+            } else {
+                $(SELECTORS.DELETE_NOTE_BUTTON).focus();
+            }
+        };
+
+        /**
+         * Show the confirm delete dialogue..
+         *
+         * @param {String} action
+         */
+        var showConfirmDialogue = (action) => {
+            $(SELECTORS.DIALOGUE_CONTAINER).removeClass('hidden');
+            if (action === 'multiple') {
+                let toshow = SELECTORS.CONFIRM_TEXT_MULTI + ', ' + SELECTORS.CONFIRM_DELETE_BUTTON_MULTI + ',' +
+                    SELECTORS.CANCEL_DELETE_BUTTON_MULTI;
+                let tohide = SELECTORS.CONFIRM_TEXT_SINGLE + ', ' + SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE + ',' +
+                    SELECTORS.CANCEL_DELETE_BUTTON_SINGLE;
+                $(tohide).addClass('hidden');
+                $(toshow).removeClass('hidden');
+                let list = [];
+                $(SELECTORS.DRAWER + ' ' + SELECTORS.CHECKBOX_LIST_NOTE + ':checked').each(function(){
+                    list.push($(this).val());
+                });
+                $(SELECTORS.CONFIRM_DELETE_BUTTON_MULTI).data('noteid', list);
+            } else {
+                let tohide = SELECTORS.CONFIRM_TEXT_MULTI + ', ' + SELECTORS.CONFIRM_DELETE_BUTTON_MULTI + ',' +
+                    SELECTORS.CANCEL_DELETE_BUTTON_MULTI;
+                let toshow = SELECTORS.CONFIRM_TEXT_SINGLE + ', ' + SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE + ',' +
+                    SELECTORS.CANCEL_DELETE_BUTTON_SINGLE;
+                $(tohide).addClass('hidden');
+                $(toshow).removeClass('hidden');
+                $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).data('noteid',
+                $(SELECTORS.FOOTER_NOTE_DELETE).data('noteid'));
+            }
         };
 
         /**
@@ -389,7 +426,7 @@ define(
          *
          * @param {Object} root The notebook drawer container.
          */
-        var hide = function (root) {
+        var hide = (root) => {
             var drawerRoot = getDrawerRoot(root);
             if (drawerRoot.length) {
                 Drawer.hide(drawerRoot);
@@ -402,7 +439,7 @@ define(
          * @param {Object} root The notebook drawer container.
          * @return {boolean}
          */
-        var isVisible = function (root) {
+        var isVisible = (root) => {
             var drawerRoot = getDrawerRoot(root);
             if (drawerRoot.length) {
                 return Drawer.isVisible(drawerRoot);
@@ -415,7 +452,7 @@ define(
          *
          * @param {String} buttonid The originating button id
          */
-        var setJumpFrom = function (buttonid) {
+        var setJumpFrom = (buttonid) => {
             $(SELECTORS.DRAWER).attr('data-origin', buttonid);
         };
 
@@ -439,25 +476,94 @@ define(
                 resetNoteForm();
             } else {
                 let args = {};
-                args.userid = this.userid;
-                args.courseid = this.courseid;
-                args.coursemoduleid = this.coursemoduleid;
+                let update = false;
+                let service = 'local_notebook_add_note';
+                let noteid = $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val();
+                if (noteid !== '0') {
+                    update = true;
+                    service = 'local_notebook_update_note';
+                    args.noteid = noteid;
+                } else {
+                    args.userid = this.userid;
+                    args.courseid = this.courseid;
+                    args.coursemoduleid = this.coursemoduleid;
+                }
                 args.subject = $(SELECTORS.NOTE_FORM +' input[name="subject"]').val();
                 args.note = $(SELECTORS.NOTE_FORM).serialize();
                 ajax.call([{
-                    methodname: 'local_notebook_add_note',
+                    methodname: service,
                     args: args,
                     done: function(result) {
-                        if (!result.error) {
-                            // Display success message.
-                            displayMessageSuccess();
-                            // Refresh list.
-                            refreshNotes();
+                        if (result) {
+                            if (!update) {
+                                delete args.subject;
+                                delete args.note;
+                                delete args.noteid;
+                                ajax.call([{
+                                    methodname: 'local_notebook_get_form_subject',
+                                    args: args,
+                                    done: function(subject) {
+                                        if (subject) {
+                                            // Set new subject.
+                                            $(SELECTORS.NOTE_FORM +' input[name="subjectorigin"]').val(subject);
+                                            // Reset form.
+                                            resetNoteForm();
+                                            // Display success message.
+                                            displayMessageSuccess('notesaved');
+                                            // Refresh list.
+                                            refreshNotes();
+                                        }
+                                    },
+                                    fail: notification.exception
+                                }]);
+                            } else {
+                                // Reset form.
+                                resetNoteForm();
+                                // Display success message.
+                                displayMessageSuccess('notesaved');
+                                // Refresh list.
+                                refreshNotes();
+                            }
                         }
                     },
                     fail: notification.exception
                 }]);
             }
+            return false;
+        };
+
+        /**
+         * Submit delete ajax.
+         *
+         */
+        var submitDeleteAjax = () => {
+            let action = $(document.activeElement).data('action');
+            let notesids = [];
+            let keymessage = 'notedeleted';
+            if (action === 'confirm-delete-multiple') {
+                notesids = $(document.activeElement).data('noteid');
+                keymessage = 'notedeletedmultiple';
+            } else {
+                notesids.push($(document.activeElement).data('noteid'));
+            }
+            ajax.call([{
+                methodname: 'local_notebook_delete_notes',
+                args: {notes: notesids},
+                done: function(result) {
+                    if (result) {
+                        // Close dialogue.
+                        closeConfirmDialogue('multiple', false);
+                        if (action === 'confirm-delete-single') {
+                            hideNoteView(false);
+                        }
+                        // Display success message.
+                        displayMessageSuccess(keymessage);
+                        // Refresh list.
+                        refreshNotes();
+                    }
+                },
+                fail: notification.exception
+            }]);
             return false;
         };
 
@@ -470,6 +576,7 @@ define(
             $(SELECTORS.NOTE_FORM + ' textarea').val('');
             $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html('');
             $(SELECTORS.NOTE_FORM + ' textarea').trigger('change');
+            $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val(0);
             // Remove message success if exist.
             $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html('');
 
@@ -478,9 +585,9 @@ define(
         /**
          * Hide note view.
          *
-         * @param {String} noteid
+         * @param {String} focus
          */
-        var hideNoteView = (noteid) => {
+        var hideNoteView = (focus) => {
             $(SELECTORS.HEADER_NOTE_VIEW).addClass('hidden');
             $(SELECTORS.HEADER_NOTE_VIEW).attr('aria-hidden', true);
             $(SELECTORS.FOOTER_NOTE_VIEW).addClass('hidden');
@@ -490,11 +597,14 @@ define(
             $(SELECTORS.BODY_LIST).removeClass('hidden');
             $(SELECTORS.BODY_LIST).removeAttr('aria-hidden');
             // Set focus back to last item clicked.
-            $(SELECTORS.VIEW_NOTE + '[data-noteid="' + noteid + '"]').focus();
+            if (!focus) {
+                return;
+            }
+            $(focus).focus();
         };
 
         /**
-         * Hide note view.
+         * Display note view.
          */
         var displayNoteView = () => {
             $(SELECTORS.HEADER_NOTE_VIEW).removeClass('hidden');
@@ -508,15 +618,41 @@ define(
         };
 
         /**
+         * Edit note view.
+         *
+         * @param {String} noteid
+         */
+        var editNoteView = (noteid) => {
+            ajax.call([{
+                methodname: 'local_notebook_read_note',
+                args: {noteid: noteid},
+                done: function(result) {
+                    if (result) {
+                        $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html(result.summary);
+                        $(SELECTORS.NOTE_FORM + ' textarea').val($(SELECTORS.NOTE_VIEW + ' .textareaorigin').val());
+                        $(SELECTORS.NOTE_FORM + ' textarea').trigger('change');
+                        $(SELECTORS.NOTE_FORM +' input[name="subject"]').val(result.subject);
+                        $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val(noteid);
+                        hideNoteView(SELECTORS.NOTE_FORM +' input[name="subject"]');
+                        toggleSaveButton();
+                    }
+                },
+                fail: notification.exception
+            }]);
+        };
+
+        /**
          * Display message success.
          *
+         * @param {String} key the string identifier.
+         *
          */
-        var displayMessageSuccess = () => {
+        var displayMessageSuccess = (key) => {
             // Remove old message.
             $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html('');
             var stringkeys = [
                 {
-                    key: 'notesaved',
+                    key: key,
                     component: 'local_notebook'
                 },
                 {
@@ -538,15 +674,41 @@ define(
          *
          */
         var toggleSaveButton = () => {
-            let editorcontent = $(SELECTORS.NOTE_FORM + ' textarea').val();
+            let editorcontent = $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html();
             let emptyeditor = false;
+            let noteid = $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val();
+            let samecontent = false;
+            if (noteid !== '0') {
+                let subjectform = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val();
+                let subjectorigin = $(SELECTORS.DRAWER + ' .titlenote').html();
+                let summaryorigin = $(SELECTORS.DRAWER + ' .summarynote').html();
+                if (subjectform.localeCompare(subjectorigin) === 0 && editorcontent.localeCompare(summaryorigin) === 0) {
+                    samecontent = true;
+                }
+            }
             if (editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0 && !editorcontent.includes("<img")) {
                 emptyeditor = true;
             }
-            if ($(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '' || emptyeditor) {
+            if ($(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '' || emptyeditor || samecontent) {
                 $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', true);
             } else {
                 $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', false);
+            }
+        };
+
+        /**
+         * Toggle delete button.
+         *
+         */
+        var toggleDeleteButton = () => {
+            let listempty = true;
+            if ($(SELECTORS.DRAWER + ' ' + SELECTORS.CHECKBOX_LIST_NOTE + ':checked').length > 0) {
+                listempty = false;
+            }
+            if (listempty) {
+                $(SELECTORS.TABLE_DELETE_BUTTON).prop('disabled', true);
+            } else {
+                $(SELECTORS.TABLE_DELETE_BUTTON).prop('disabled', false);
             }
         };
 
@@ -558,7 +720,7 @@ define(
          * @param {String} courseid The course ID
          * @param {String} coursemoduleid The cours module ID
          */
-        var registerEventListeners = function (root, userid, courseid, coursemoduleid) {
+        var registerEventListeners = (root, userid, courseid, coursemoduleid) => {
             this.userid = userid;
             this.courseid = courseid;
             this.coursemoduleid = coursemoduleid;
@@ -580,7 +742,7 @@ define(
                     hide(root);
                     $(SELECTORS.JUMPTO).attr('tabindex', -1);
                     // Load formchangechecker module.
-                    Y.use('moodle-core-formchangechecker', () => {
+                    Y.use('moodle-core-formchangechecker', function() {
                         M.core_formchangechecker.init({formid: SELECTORS.NOTE_FORM_ID});
                     });
                     Y.use('moodle-core-formchangechecker', function() {
@@ -593,7 +755,7 @@ define(
                 }
             });
 
-            $(SELECTORS.JUMPTO).on('focus', function () {
+            $(SELECTORS.JUMPTO).on('focus', function() {
                 var firstInput = root.find(SELECTORS.CLOSE_BUTTON);
                 if (firstInput.length) {
                     firstInput.focus();
@@ -602,7 +764,7 @@ define(
                 }
             });
 
-            $(SELECTORS.DRAWER).focus(function () {
+            $(SELECTORS.DRAWER).focus(function() {
                 var button = $(this).attr('data-origin');
                 if (button) {
                     $('#' + button).focus();
@@ -610,7 +772,7 @@ define(
             });
 
             var closebutton = root.find(SELECTORS.CLOSE_BUTTON);
-            closebutton.on(CustomEvents.events.activate, function (e, data) {
+            closebutton.on(CustomEvents.events.activate, function(e, data) {
                 data.originalEvent.preventDefault();
                 var button = $(SELECTORS.DRAWER).attr('data-origin');
                 if (button) {
@@ -620,18 +782,39 @@ define(
             });
 
             // Back to list.
-            $(SELECTORS.DRAWER).on('click', SELECTORS.BACK_TO_LIST, function () {
-                hideNoteView($(this).data('noteid'));
+            $(SELECTORS.DRAWER).on('click', SELECTORS.BACK_TO_LIST, function() {
+                hideNoteView(SELECTORS.VIEW_NOTE + '[data-noteid="' + $(this).data('noteid') + '"]');
             });
             // View note.
-            $(SELECTORS.DRAWER).on('click', SELECTORS.VIEW_NOTE, function () {
+            $(SELECTORS.DRAWER).on('click', SELECTORS.VIEW_NOTE, function() {
                 displayNote($(this).data('noteid'));
             });
-
+            // Edit note.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.FOOTER_NOTE_EDIT, function() {
+                editNoteView($(this).data('noteid'));
+            });
+            // Cancel delete note.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.CANCEL_DELETE_BUTTON_SINGLE, function() {
+                closeConfirmDialogue('single', true);
+            });
+            $(SELECTORS.DRAWER).on('click', SELECTORS.CANCEL_DELETE_BUTTON_MULTI, function() {
+                closeConfirmDialogue('multiple', true);
+            });
+            // Delete note button.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.DELETE_NOTE_BUTTON, function() {
+                let action = 'multiple';
+                if ($(this).data('noteid')) {
+                    action = 'single';
+                }
+                showConfirmDialogue(action);
+            });
+            // Confirm delete note button.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE + ' , ' + SELECTORS.CONFIRM_DELETE_BUTTON_MULTI,
+                            submitDeleteAjax);
             // If notebook drawer is visible and we open message drawer, hide notebook.
             var msdrawerRoot = Drawer.getDrawerRoot($('[data-region="message-drawer"]'));
             var messagetoggler = $('[id^="message-drawer-toggle-"]');
-            messagetoggler.on('click keydown keypress', function () {
+            messagetoggler.on('click keydown keypress', function() {
                 var keycode = (event.keyCode ? event.keyCode : event.which);
                 // Enter, space or click.
                 if (keycode == '13' || keycode == '32' || event.type == 'click') {
@@ -647,6 +830,9 @@ define(
             toggleSaveButton();
             $(SELECTORS.BODY_CONTAINER + ' form input[type="text"]').on('input', toggleSaveButton);
             $(SELECTORS.BODY_CONTAINER + ' form textarea').on('change', toggleSaveButton);
+            // Enable/disbled delete button.
+            $(SELECTORS.DRAWER).on('change', SELECTORS.CHECKBOX_LIST_NOTE + ', ' + SELECTORS.CHECKBOX_ALL_NOTE,
+                            toggleDeleteButton);
         };
 
         /**
@@ -657,7 +843,7 @@ define(
          * @param {String} courseid The course ID
          * @param {String} coursemoduleid The cours module ID
          */
-        var init = function (root, userid, courseid, coursemoduleid) {
+        var init = (root, userid, courseid, coursemoduleid) => {
             root = $(root);
             registerEventListeners(root, userid, courseid, coursemoduleid);
         };

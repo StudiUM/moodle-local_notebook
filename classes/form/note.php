@@ -47,6 +47,8 @@ class note extends moodleform  implements renderable {
         $mform->setAttributes(['id' => 'noteform'] + $mform->getAttributes());
         $mform->addElement('hidden', 'subjectorigin');
         $mform->setType('subjectorigin', PARAM_TEXT);
+        $mform->addElement('hidden', 'noteid');
+        $mform->setType('noteid', PARAM_TEXT);
 
         $mform->addElement('text', 'subject', '', ['data-required' => 'true', 'maxlength' => 255,
             'aria-label' => get_string('notesubject', 'local_notebook')]);

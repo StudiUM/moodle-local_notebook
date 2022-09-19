@@ -52,6 +52,7 @@ class helper {
         $data = new \Stdclass;
         $data->subject = $subject;
         $data->subjectorigin = $subject;
+        $data->noteid = 0;
         $form = new \local_notebook\form\note();
         $form->set_data($data);
         ob_start();
@@ -102,15 +103,16 @@ class helper {
      * @return string The subject
      */
     public static function prepare_subject($relateduserid, $courseid, $coursemoduleid) {
-        global $PAGE;
         $count = self::count_notes($relateduserid, $courseid, $coursemoduleid);
         $count += 1;
         if ($courseid) {
-            $a = ['count' => $count, 'name' => $PAGE->course->shortname];
+            $modinfo = get_fast_modinfo($courseid);
+            $course = $modinfo->get_course();
+            $a = ['count' => $count, 'name' => $course->shortname];
             $subject = get_string('noteforcourse', 'local_notebook', $a);
             if ($coursemoduleid) {
                 $a = ['count' => $count,
-                'name' => get_fast_modinfo($PAGE->course->id)->get_cm($PAGE->context->instanceid)->get_formatted_name()];
+                'name' => $modinfo->get_cm($coursemoduleid)->get_formatted_name()];
                 $subject = get_string('noteforcoursemodule', 'local_notebook', $a);
             } else if ($relateduserid) {
                 $user = \core_user::get_user($relateduserid);

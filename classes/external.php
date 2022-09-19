@@ -175,9 +175,14 @@ class external extends external_api {
             'note' => $note,
             'subject' => $subject
         ));
+        $note = $params['note'];
+        parse_str($params['note'], $data);
+        if (is_array($data) && isset($data['note'])) {
+            $note = $data['note']['text'];
+        }
         return api::update_note(
             $params['noteid'],
-            $params['note'],
+            $note,
             $params['subject']);
     }
 
@@ -229,6 +234,66 @@ class external extends external_api {
      */
     public static function delete_notes_returns() {
         return new external_value(PARAM_BOOL, 'True if delete was successfull.');
+    }
+
+    /**
+     * Returns description of get_form_subject parameters
+     *
+     * @return \external_function_parameters
+     */
+    public static function get_form_subject_parameters() {
+        $userid = new external_value(
+            PARAM_INT,
+            'User ID',
+            VALUE_DEFAULT
+        );
+        $courseid = new external_value(
+            PARAM_INT,
+            'Course ID',
+            VALUE_DEFAULT
+        );
+        $coursemoduleid = new external_value(
+            PARAM_INT,
+            'Course module ID',
+            VALUE_DEFAULT
+        );
+
+        $params = array(
+            'userid' => $userid,
+            'courseid' => $courseid,
+            'coursemoduleid' => $coursemoduleid,
+        );
+        return new external_function_parameters($params);
+    }
+
+    /**
+     * Get form subject.
+     *
+     * @param int $userid The user ID.
+     * @param int $courseid The course ID.
+     * @param int $coursemoduleid The course module ID.
+     * @return string
+     */
+    public static function get_form_subject($userid, $courseid, $coursemoduleid) {
+        global $CFG;
+
+        $params = self::validate_parameters(self::get_form_subject_parameters(), array(
+            'userid' => $userid,
+            'courseid' => $courseid,
+            'coursemoduleid' => $coursemoduleid
+        ));
+        $context = \context_system::instance();
+        self::validate_context($context);
+        return  \local_notebook\helper::prepare_subject($params['userid'], $params['courseid'], $params['coursemoduleid']);
+
+    }
+
+    /**
+     * Returns description of get_form_subject result value.
+     *
+     */
+    public static function get_form_subject_returns() {
+        return new external_value(PARAM_TEXT, 'Return the form subject');
     }
 
     /**
