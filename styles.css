@@ -125,6 +125,21 @@
     [data-region=right-hand-notebook-drawer] #notebook-table tbody tr:nth-of-type(1) td .card-views {
         margin-top: 30px;
     }
+    [data-region=right-hand-notebook-drawer] #notebook-table tbody tr td .card-views {
+        position: relative;
+    }
+    [data-region=right-hand-notebook-drawer] #notebook-table tbody tr td .card-view:first-child {
+        float: left;
+    }
+    [data-region=right-hand-notebook-drawer] #notebook-table tbody tr td .card-view:last-child {
+        position: absolute;
+        top: 0;
+        right: 10px;
+        font-size: 20px;
+    }
+    [data-region=right-hand-notebook-drawer] #notebook-table tbody tr td .card-view:not(:first-child):not(:last-child) {
+        margin-left:25px;
+    }
     [data-region=right-hand-notebook-drawer] div.editor_atto_toolbar button {
         padding: 2px 5px;
     }
@@ -191,6 +206,16 @@
 [data-region=right-hand-notebook-drawer] .bootstrap-table .context-note.wcn-2 {
     max-width: 120px;
 }
+
+@media (max-width:575.98px) {
+    [data-region=right-hand-notebook-drawer] .bootstrap-table span.subject {
+        width:80%;
+    }
+    [data-region=right-hand-notebook-drawer] .bootstrap-table .context-note.wcn-2 {
+        max-width: 100px;
+    }
+}
+
 [data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-container .table thead th .th-inner {
     padding: 0.25rem;
 }
@@ -206,16 +231,6 @@
 [data-region=right-hand-notebook-drawer] .fixed-table-toolbar input.form-control {
     height: calc(1.5em + 0.5rem + 2px);
     padding: 0.25rem .75rem;
-}
-[data-region=right-hand-notebook-drawer] #list-note-container {
-    position: absolute;
-    right: 0;
-    left: 0;
-    top: unset;
-    bottom: 0;
-    overflow: auto;
-    padding-left: 5px;
-    padding-right: 5px;
 }
 [data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-pagination>.pagination,
 [data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-pagination>.pagination-detail {
@@ -234,11 +249,6 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
-[data-region=right-hand-notebook-drawer] #add-note-form-container {
-    position: absolute;
-    overflow: auto;
-    top: 0px;
-}
 [data-region=right-hand-notebook-drawer] #fitem_id_subject .col-md-3.col-form-label,
 [data-region=right-hand-notebook-drawer] #fitem_id_note .col-md-3.col-form-label {
     display: none !important;
@@ -250,6 +260,99 @@
     padding-right: 5px;
     padding-left: 5px;
 }
+[data-region=right-hand-notebook-drawer] .message-app .view-overview-body {
+    display: flex;
+    flex-direction: column;
+}
+[data-region=right-hand-notebook-drawer] #add-note-form-container {
+    height: 45%;
+}
+[data-region=right-hand-notebook-drawer] #add-note-form-container form {
+    display: flex;
+    flex-direction: column;
+}
+[data-region=right-hand-notebook-drawer] #list-note-container {
+    display: flex;
+    flex-direction: column;
+    padding-left: 5px;
+    padding-right: 5px;
+    margin-top: auto;
+}
+[data-region=right-hand-notebook-drawer] #notebook-table-container{
+    margin-top: auto;
+}
+[data-region=right-hand-notebook-drawer] #add-note-form-container form,
+[data-region=right-hand-notebook-drawer] #fitem_id_note,
+[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor],
+[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] > div,
+[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap,
+[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .editor_atto {
+    height: 100%;
+}
+[data-region=right-hand-notebook-drawer] #fitem_id_note .editor_atto_content_wrap{
+    height:75%;
+}
+[data-region=right-hand-notebook-drawer] #fitem_id_note #id_noteeditable {
+    min-height: auto !important;
+    height: 75% !important;
+    position:absolute;
+    resize: none;
+}
+[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .editor_atto_notification{
+    position: absolute;
+    bottom:12px;
+    left:1px;
+}
+[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .atto_info {
+    font-size: 13px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+@media (max-width:1024px) {
+    [data-region=right-hand-notebook-drawer] #add-note-form-container {
+        height: 65%;
+    }
+}
+@media screen and (min-width: 769px) and (max-width: 1024px) and (orientation: portrait) {
+    [data-region=right-hand-notebook-drawer] #fitem_id_note #id_noteeditable,
+    [data-region=right-hand-notebook-drawer] #fitem_id_note .editor_atto_content_wrap {
+        height: 89% !important;
+    }
+    [data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .atto_info{
+        margin-top:10px;
+    }
+}
+@media screen and (min-width: 481px) and (max-width: 768px) and (orientation: portrait) {
+    [data-region=right-hand-notebook-drawer] #fitem_id_note #id_noteeditable,
+    [data-region=right-hand-notebook-drawer] #fitem_id_note .editor_atto_content_wrap {
+        height: 82% !important;
+    }
+}
+@media screen and (max-width:480px) and (orientation: portrait) {
+    [data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon .alert {
+        margin-top: 1rem;
+    }
+    [data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .atto_info{
+        font-size: 11px;
+    }
+}
+
+@media screen and (min-width:401px) and (max-width:480px) and (orientation: portrait) {
+    [data-region=right-hand-notebook-drawer] #fitem_id_note .editor_atto_content_wrap,
+    [data-region=right-hand-notebook-drawer] #fitem_id_note #id_noteeditable {
+        height: 57% !important;
+    }
+    [data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon .alert {
+        margin-top: 1rem;
+    }
+}
+@media screen and (max-width:400px) and (orientation: portrait) {
+    [data-region=right-hand-notebook-drawer] #fitem_id_note .editor_atto_content_wrap,
+    [data-region=right-hand-notebook-drawer] #fitem_id_note #id_noteeditable {
+        height: 60% !important;
+    }
+}
+
 [data-region=right-hand-notebook-drawer] #add-note-form-container form {
     margin-top: 5px;
     padding-left: 5px;

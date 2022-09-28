@@ -223,28 +223,6 @@ define(
         };
 
         /**
-         * Resize editor.
-         *
-         */
-        var resizeEditor = () => {
-            let heightcontainer = $(SELECTORS.BODY_CONTAINER).outerHeight(true);
-            let heightlistnote = $(SELECTORS.BODY_CONTAINER + " #list-note-container").outerHeight(true);
-            let heightsubject = $(SELECTORS.BODY_CONTAINER + " #fitem_id_subject").outerHeight(true);
-            let heightbutton = $(SELECTORS.BODY_CONTAINER + " [data-region='footer']").outerHeight(true);
-            let heighttoolbareditor = $(SELECTORS.BODY_CONTAINER + " [role='toolbar']").outerHeight(true);
-            let margin = 40;
-            let heighteditor = heightcontainer - heightlistnote - heightsubject - heightbutton - heighttoolbareditor - margin;
-            if (heighteditor < 100) {
-                heighteditor = 100;
-            }
-
-            $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").css( {
-                "min-height" : heighteditor + "px",
-                "height" : heighteditor + "px",
-            });
-        };
-
-        /**
          * Display notes.
          *
          */
@@ -282,10 +260,12 @@ define(
                 let box = document.querySelector('[data-region="right-hand-notebook-drawer"]');
                 let height = box.offsetHeight;
                 let tableheight = 460;
-                if (height < 800) {
+                if (height > 700 && height < 800) {
+                    tableheight = 350;
+                } else if (height < 700 && height > 600) {
                     tableheight = 300;
                 } else if (height < 600) {
-                    tableheight = 250;
+                    tableheight = 200;
                 }
 
                 let data = [];
@@ -361,11 +341,7 @@ define(
                                     ].join('');
                                 }
                             }]
-                        ],
-                        onPostBody: function() {
-                            // Resize editor to the wright height.
-                            resizeEditor();
-                        }
+                        ]
                     });
                 }).fail(notification.exception);
             }).fail(Notification.exception);
