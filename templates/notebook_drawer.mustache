@@ -37,7 +37,7 @@
 }}
 <div
     id="{{$drawerid}}drawer-{{uniqid}}{{/drawerid}}"
-    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}}"
+    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}} notebookcontainer"
     aria-expanded="{{#show}}true{{/show}}{{^show}}false{{/show}}"
     {{^show}}aria-hidden="true"{{/show}}
     data-region="right-hand-notebook-drawer"
@@ -73,6 +73,12 @@
         <div class="footer-container position-relative"  data-region="footer-container">
             {{! footer container }}
             {{>local_notebook/notebook_drawer_view_note_footer}}
+            <div data-region="view-overview" class="text-center">
+                <a href="{{{noteurl}}}">
+                    {{#str}} seeall, local_notebook {{/str}}
+                </a>
+            </div>
+
         </div>
         <div class="p-4 w-100 h-100 hidden position-absolute z-index-1" data-region="confirm-dialogue-container">
             {{> local_notebook/note_confirm_delete_dialogue }}

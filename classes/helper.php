@@ -53,7 +53,44 @@ class helper {
         $data->subject = $subject;
         $data->subjectorigin = $subject;
         $data->noteid = 0;
-        $form = new \local_notebook\form\note();
+        $form = new \local_notebook\form\note(null, ['index' => false]);
+        $form->set_data($data);
+        ob_start();
+        $form->display();
+        $formhtml = ob_get_contents();
+        ob_end_clean();
+        $url = new \moodle_url('/local/notebook/index.php');
+        if ($relateduserid !== 0) {
+            $url->param('userid', $relateduserid);
+        }
+        if ($courseid !== 0) {
+            $url->param('courseid', $courseid);
+        }
+        if ($coursemoduleid !== 0) {
+            $url->param('cmid', $coursemoduleid);
+        }
+        $renderer = $PAGE->get_renderer('core');
+        return $renderer->render_from_template('local_notebook/notebook_drawer',
+        ['userid' => $relateduserid,
+            'courseid' => $courseid, 'coursemoduleid' => $coursemoduleid, 'form' => $formhtml, 'noteurl' => $url]);
+    }
+
+    /**
+     * Renders the notebook index.
+     *
+     * @param int $courseid The course ID
+     * @param int $coursemoduleid The course module ID
+     * @param int $relateduserid The related user ID
+     * @return string The HTML.
+     */
+    public static function render_notebook_index($courseid, $coursemoduleid, $relateduserid) {
+        global $PAGE;
+        if (!self::has_to_display_notebook()) {
+            return;
+        }
+        $data = new \Stdclass;
+        $data->noteid = 0;
+        $form = new \local_notebook\form\note(null, ['index' => true]);
         $form->set_data($data);
         ob_start();
         $form->display();
@@ -61,7 +98,7 @@ class helper {
         ob_end_clean();
 
         $renderer = $PAGE->get_renderer('core');
-        return $renderer->render_from_template('local_notebook/notebook_drawer',
+        return $renderer->render_from_template('local_notebook/notebook_index',
         ['userid' => $relateduserid, 'courseid' => $courseid, 'coursemoduleid' => $coursemoduleid, 'form' => $formhtml]);
     }
 

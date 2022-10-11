@@ -44,6 +44,8 @@ class note extends moodleform  implements renderable {
      */
     public function definition() {
         $mform = $this->_form;
+        $reset = ($this->_customdata['index']) ? get_string('cancel') : get_string('reset');
+        $resetlabel = ($this->_customdata['index']) ? get_string('cancel') : get_string('notereset', 'local_notebook');
         $mform->setAttributes(['id' => 'noteform'] + $mform->getAttributes());
         $mform->addElement('hidden', 'subjectorigin');
         $mform->setType('subjectorigin', PARAM_TEXT);
@@ -64,9 +66,9 @@ class note extends moodleform  implements renderable {
                 ['data-action' => 'save',
                 'id' => 'savenote',
                 'aria-label' => get_string('notesave', 'local_notebook')]);
-        $buttonarray[] = $mform->createElement('cancel', '', get_string('reset'),
+        $buttonarray[] = $mform->createElement('cancel', '', $reset,
                 ['data-action' => 'reset',
-                'aria-label' => get_string('notereset', 'local_notebook'),
+                'aria-label' => $resetlabel,
                 'id' => 'resetnote']);
         // Accessiblity for required fields.
         $mform->addElement('html', \html_writer::span(get_string('formrequiredfields', 'local_notebook'), 'sr-only'));

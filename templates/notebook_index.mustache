@@ -1,0 +1,97 @@
+{{!
+    This file is part of Moodle - http://moodle.org/
+
+    Moodle is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    Moodle is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
+}}
+{{!
+    @template local_notebook/notebook_index
+
+    This template will render the notebook index page.
+
+    Classes required for JS:
+    * none
+
+    Data attributes required for JS:
+    * All data attributes are required
+
+    Context variables required for this template:
+    * userid The user ID
+    * courseid The course ID
+    * coursemoduleid The course module ID
+
+
+    Example context (json):
+    {}
+
+}}
+<div class="notebookcontainer">
+    <div class="messagesuccesscontainer" aria-live="assertive"></div>
+    <div class="p-4 w-100 h-100 hidden position-absolute z-index-1 notebook-index" data-region="confirm-dialogue-container">
+        {{> local_notebook/note_confirm_delete_dialogue }}
+    </div>
+    <div id="notebook-index-{{uniqid}}" data-region="notebook-index" role="region" class="message-app main flex-row">
+        <div class="container-fluid">
+            <div class="row h-100 no-gutters">
+                <div class="col-12 col-xl-7 d-flex flex-column notelistcontainer border pr-2 pl-2  mt-2">
+                    <div>
+                        <div id="toolbar-index">
+                            <button id="remove" class="btn btn-danger deletenote" disabled>
+                                <i class="fa fa-trash"  aria-hidden="true"></i> {{#str}} delete, core {{/str}}
+                            </button>
+                        </div> 
+                        <table
+                        id="notebook-table-index"
+                        data-toolbar="toolbar-ondex"
+                        data-search="true"
+                        data-search-highlight="true"
+                        data-show-refresh="true"
+                        data-minimum-count-columns="1"
+                        data-detail-view="false"
+                        data-show-export="true"
+                        data-show-footer="false"
+                        data-click-to-select="false"
+                        data-id-field="id"
+                        data-pagination="true"
+                        data-page-size="10"
+                        data-mobile-responsive="true"
+                        data-check-on-init="true"
+                        >
+                        </table>
+                    </div>
+                </div>
+                <div id="notedetailcontainer" class="col-12 col-xl-5 d-flex flex-column border mt-2">
+                    <div class="header-container position-relative" data-region="header-container">
+                        {{>local_notebook/notebook_drawer_view_note_header}}
+                    </div>
+                    <div class="form-note h-100 hidden" data-region="form-note" aria-hidden="true">
+                        <div>
+                            {{{form}}}
+                        </div>
+                    </div>
+                    <div class="view-note h-100" data-region="view-note">
+                    </div>
+                    <div class="footer-container position-relative" data-region="footer-container">
+                        {{>local_notebook/notebook_drawer_view_note_footer}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{{#js}}
+require(['jquery', 'local_notebook/notebook_index'], function($, NotebookIndex) {
+    NotebookIndex.init({{userid}}, {{courseid}}, {{coursemoduleid}});
+});
+{{/js}}
+
