@@ -81,7 +81,7 @@ define(
             FOOTER_NOTE_DELETE: '[data-region="footer-container"] .deletenote',
             FOOTER_NOTE_EDIT: '[data-region="footer-container"] .editnote',
             FOOTER_NOTE_TAGS: '[data-region="footer-container"] .notetags',
-            MESSAGE_SUCCESS_CONTAINER: '[data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon',
+            MESSAGE_SUCCESS_CONTAINER: '#message-success-container',
             DIALOGUE_CONTAINER: '[data-region="right-hand-notebook-drawer"] [data-region="confirm-dialogue-container"]',
             CONFIRM_TEXT_MULTI: '[data-region="right-hand-notebook-drawer"] [data-region="confirm-dialogue-container"] ' +
                 '.multiplenotes',
@@ -94,7 +94,12 @@ define(
             DELETE_NOTE_BUTTON: '.deletenote',
             CHECKBOX_LIST_NOTE: '[name="btSelectItem"]',
             CHECKBOX_ALL_NOTE: '[name="btSelectAll"]',
-            TABLE_DELETE_BUTTON: '[data-region="body-container"] #remove'
+            TABLE_DELETE_BUTTON: '#delete-selected-notes',
+            NOTE_LIST_ACTIONS: '#note-list-actions',
+            SELECTED_NOTE_COUNT: '#note-list-actions .selected-note-count',
+            CLOSE_NOTE_LIST_ACTIONS: '#note-list-actions .close',
+            TABLE_PAGINATION: '[data-region="right-hand-notebook-drawer"] .fixed-table-pagination',
+            SEEALL_CONTAINER: '[data-region="footer-container"] [data-region="view-overview"]'
         };
         var Events = {
             SHOW: 'notebook-drawer-show',
@@ -257,16 +262,8 @@ define(
             ];
 
             str.get_strings(stringkeys).then(function(langStrings) {
-                let box = document.querySelector('[data-region="right-hand-notebook-drawer"]');
-                let height = box.offsetHeight;
-                let tableheight = 460;
-                if (height > 700 && height < 800) {
-                    tableheight = 350;
-                } else if (height < 700 && height > 600) {
-                    tableheight = 300;
-                } else if (height < 600) {
-                    tableheight = 200;
-                }
+                let tablecontainer = document.querySelector('#list-note-container');
+                let tableheight = tablecontainer.offsetHeight;
 
                 let data = [];
                 promises[0].done(function (result) {
@@ -534,6 +531,7 @@ define(
                         }
                         // Display success message.
                         displayMessageSuccess(keymessage);
+                        $(SELECTORS.CLOSE_NOTE_LIST_ACTIONS).trigger('click');
                         // Refresh list.
                         refreshNotes();
                     }
@@ -674,18 +672,37 @@ define(
         };
 
         /**
-         * Toggle delete button.
+         * Toggle note list footer (pagination/ seeAll link).
+         *
+         * @param {String} action show or hide
+         */
+         var toggleNoteListFooter = (action) => {
+            if (action === 'hide') {
+                $(SELECTORS.TABLE_PAGINATION).addClass('invisible');
+                $(SELECTORS.SEEALL_CONTAINER).addClass('invisible');
+            } else {
+                $(SELECTORS.TABLE_PAGINATION).removeClass('invisible');
+                $(SELECTORS.SEEALL_CONTAINER).removeClass('invisible');
+            }
+        };
+
+        /**
+         * Toggle Note list actions.
          *
          */
-        var toggleDeleteButton = () => {
-            let listempty = true;
-            if ($(SELECTORS.DRAWER + ' ' + SELECTORS.CHECKBOX_LIST_NOTE + ':checked').length > 0) {
-                listempty = false;
-            }
-            if (listempty) {
-                $(SELECTORS.TABLE_DELETE_BUTTON).prop('disabled', true);
+        var toggleNoteListActions = () => {
+            let selectednotecount = $(SELECTORS.DRAWER + ' ' + SELECTORS.CHECKBOX_LIST_NOTE + ':checked').length;
+
+            if (selectednotecount) {
+                let arialabel = selectednotecount + ' ' + $(SELECTORS.SELECTED_NOTE_COUNT).attr('data-arialabel');
+                $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).empty();
+                $(SELECTORS.SELECTED_NOTE_COUNT).text(selectednotecount);
+                $(SELECTORS.SELECTED_NOTE_COUNT).attr('aria-label', arialabel);
+                toggleNoteListFooter('hide');
+                $(SELECTORS.NOTE_LIST_ACTIONS).removeClass('hidden');
             } else {
-                $(SELECTORS.TABLE_DELETE_BUTTON).prop('disabled', false);
+                toggleNoteListFooter('show');
+                $(SELECTORS.NOTE_LIST_ACTIONS).addClass('hidden');
             }
         };
 
@@ -809,7 +826,13 @@ define(
             $(SELECTORS.BODY_CONTAINER + ' form textarea').on('change', toggleSaveButton);
             // Enable/disbled delete button.
             $(SELECTORS.DRAWER).on('change', SELECTORS.CHECKBOX_LIST_NOTE + ', ' + SELECTORS.CHECKBOX_ALL_NOTE,
-                            toggleDeleteButton);
+                            toggleNoteListActions);
+
+            // Close note list actions.
+            $(SELECTORS.DRAWER).on('click', SELECTORS.CLOSE_NOTE_LIST_ACTIONS, function() {
+                $(SELECTORS.CHECKBOX_ALL_NOTE).prop('checked', false).trigger('click');
+                toggleNoteListFooter('show');
+            });
         };
 
         /**

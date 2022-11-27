@@ -51,6 +51,7 @@ $string['openmynotebook'] = 'Open my notebook';
 $string['pluginname'] = 'Notebook';
 $string['privacy:metadata'] = 'The Notebook plugin does not store any personal data.';
 $string['seeall'] = 'Show all notes';
+$string['selectednotes'] = 'selected notes';
 $string['subjectcannotbeempty'] = 'The subject cannot be empty.';
 $string['usercannotaccesscourse'] = 'The user cannot access to the course information.';
 $string['usercannotaccesscoursemodule'] = 'The user cannot access to the course module.';

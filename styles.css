@@ -63,7 +63,50 @@
 	flex-direction: column;
 	transition: right 0.2s ease-in-out
 }
-
+[data-region=right-hand-notebook-drawer] .closewidget a:focus{
+    border: 1px solid #fff;
+    padding: 0px 4px 0px 4px;
+    height: 25px;
+}
+[data-region=right-hand-notebook-drawer] .closewidget a .icon {
+    color: white;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar {
+    display: flex;
+    flex-direction: row-reverse;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .columns{
+    width: 10%;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .search {
+    width: 90%;
+}
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar input.form-control {
+    width: 100%;
+}
+[data-region=right-hand-notebook-drawer] #message-success-container,
+[data-region=right-hand-notebook-drawer] #note-list-actions {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+}
+[data-region=right-hand-notebook-drawer] #note-list-actions {
+    padding: 13px;
+    background: #eff1f3;
+}
+[data-region=right-hand-notebook-drawer] #note-list-actions .selected-note-count{
+    min-width : 30px;
+}
+[data-region=right-hand-notebook-drawer] #note-list-actions .close{
+    font-size: inherit;
+}
+[data-region=right-hand-notebook-drawer] #message-success-container {
+    z-index: 4;
+}
+[data-region=right-hand-notebook-drawer] #message-success-container .alert{
+    margin-bottom: 0;
+    padding: 1.5rem;
+}
 @media (prefers-reduced-motion:reduce) {
 	[data-region=right-hand-notebook-drawer] {
 		transition: none

@@ -45,9 +45,9 @@
     tabindex="0"
 >
     <div id="notebook-drawer-{{uniqid}}" data-region="notebook-drawer" role="region" class="message-app">
-        <h2 class="accesshide">{{#str}} pluginname, local_notebook {{/str}}</h2>
-        <div class="closewidget text-right pr-2">
-            <a class="text-dark btn-link" data-action="closedrawer" href="#"
+        <div class="closewidget d-flex pr-2 pt-2 bg-primary text-white text-center">
+            <h2 class="flex-grow-1 p-1 h5">{{#str}} pluginname, local_notebook {{/str}}</h2>
+            <a class="btn-link text-white" data-action="closedrawer" href="#"
                 title="{{#cleanstr}} closebuttontitle {{/cleanstr}}" aria-label="{{#cleanstr}} closebuttontitle {{/cleanstr}}"
             >
                 {{#pix}} i/window_close, core {{/pix}}
@@ -62,10 +62,10 @@
             </div>
 
             <div class="h-100 view-overview-body" data-region="view-overview">
-                <div id="add-note-form-container">
+                <div id="add-note-form-container" class="hidden">
                     {{{form}}}
                 </div>
-                <div id="list-note-container">
+                <div id="list-note-container" class="h-100">
                     {{>local_notebook/notebook_table}}
                 </div>
             </div>
@@ -78,7 +78,7 @@
                     {{#str}} seeall, local_notebook {{/str}}
                 </a>
             </div>
-
+            {{>local_notebook/notebook_list_actions}}
         </div>
         <div class="p-4 w-100 h-100 hidden position-absolute z-index-1" data-region="confirm-dialogue-container">
             {{> local_notebook/note_confirm_delete_dialogue }}
