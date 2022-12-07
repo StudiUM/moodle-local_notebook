@@ -37,7 +37,7 @@
 }}
 <div
     id="{{$drawerid}}drawer-{{uniqid}}{{/drawerid}}"
-    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}} notebookcontainer"
+    class="{{$drawerclasses}}{{/drawerclasses}} drawer bg-white {{^show}}hidden{{/show}} notebookcontainer list"
     aria-expanded="{{#show}}true{{/show}}{{^show}}false{{/show}}"
     {{^show}}aria-hidden="true"{{/show}}
     data-region="right-hand-notebook-drawer"
@@ -62,7 +62,7 @@
             </div>
 
             <div class="h-100 view-overview-body" data-region="view-overview">
-                <div id="add-note-form-container" class="hidden">
+                <div id="add-note-form-container" class="h-100 hidden">
                     {{{form}}}
                 </div>
                 <div id="list-note-container" class="h-100">

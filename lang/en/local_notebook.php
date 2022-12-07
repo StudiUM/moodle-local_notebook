@@ -23,6 +23,7 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['addbuttontitle'] = 'Add note';
 $string['backtolist'] = 'Back to notes list';
 $string['cannotusenotebook'] = 'You cannot use the notebook on this page.';
 $string['confirmdeletemultiplenotes'] = 'Are you sure you would like to delete the selected notes?';

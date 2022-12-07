@@ -63,7 +63,7 @@ define(
             NOTE_TABLE: '#notebook-table-index',
             REFRESH_BUTTON: 'button[name="refresh"]',
             SAVE_BUTTON: '#savenote',
-            RESET_BUTTON: '#resetnote',
+            CANCEL_BUTTON: '#cancel-add-edit',
             NOTE_FORM_ID: 'noteform',
             VIEW_NOTE: '#notebook-table-index .viewnote',
             NOTE_VIEW: '[data-region="notebook-index"] .view-note',
@@ -71,8 +71,8 @@ define(
             HEADER_NOTE_VIEW: '[data-region="header-container"] [data-region="view-note"]',
             HEADER_NOTE_DATE: '[data-region="header-container"] .notedate',
             NOTE_FORM: '[data-region="form-note"] #noteform',
-            FOOTER_NOTE_DELETE: '[data-region="footer-container"] .deletenote',
-            FOOTER_NOTE_EDIT: '[data-region="footer-container"] .editnote',
+            HEADER_NOTE_DELETE : '[data-region="header-container"] .deletenote',
+            HEADER_NOTE_EDIT: '[data-region="header-container"] .editnote',
             FOOTER_NOTE_TAGS: '[data-region="footer-container"] .notetags',
             MESSAGE_SUCCESS_CONTAINER: '.notebookcontainer .messagesuccesscontainer',
             DIALOGUE_CONTAINER: '.notebookcontainer [data-region="confirm-dialogue-container"]',
@@ -174,8 +174,8 @@ define(
                     // Display date.
                     $(SELECTORS.HEADER_NOTE_DATE).html(datecreation + ' ' + timecreation);
                     // Set buttons.
-                    $(SELECTORS.FOOTER_NOTE_DELETE).data('noteid', result.id);
-                    $(SELECTORS.FOOTER_NOTE_EDIT).data('noteid', result.id);
+                    $(SELECTORS.HEADER_NOTE_DELETE ).data('noteid', result.id);
+                    $(SELECTORS.HEADER_NOTE_EDIT).data('noteid', result.id);
                     // Set tags.
                     $(SELECTORS.FOOTER_NOTE_TAGS).html(getFormattedTags(result.tags));
                     // Remove blur content.
@@ -348,7 +348,7 @@ define(
                 $(tohide).addClass('hidden');
                 $(toshow).removeClass('hidden');
                 $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).data('noteid',
-                $(SELECTORS.FOOTER_NOTE_DELETE).data('noteid'));
+                $(SELECTORS.HEADER_NOTE_DELETE ).data('noteid'));
                 $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).focus();
             }
             window.scrollTo(0, $(SELECTORS.DIALOGUE_CONTAINER).position().top);
@@ -428,7 +428,7 @@ define(
          */
         var cancelNoteForm = () => {
             displayNoteView();
-            $(SELECTORS.FOOTER_NOTE_EDIT).focus();
+            $(SELECTORS.HEADER_NOTE_EDIT).focus();
         };
 
         /**
@@ -593,8 +593,14 @@ define(
                 $(this).closest('tr').addClass('selected');
             });
             // Edit note.
-            $(SELECTORS.NOTEINDEX).on('click', SELECTORS.FOOTER_NOTE_EDIT, function() {
+            $(SELECTORS.NOTEINDEX).on('click', SELECTORS.HEADER_NOTE_EDIT, function() {
                 editNoteView($(this).data('noteid'));
+            });
+            // Cancel edit note.
+            $(SELECTORS.NOTEINDEX).on('click', SELECTORS.CANCEL_BUTTON, function(e) {
+                e.preventDefault();
+                let noteid = $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val();
+                displayNote(noteid);
             });
             // Cancel delete note.
             $(SELECTORS.NOTEBOOKCONTAINER).on('click', SELECTORS.CANCEL_DELETE_BUTTON_SINGLE, function() {

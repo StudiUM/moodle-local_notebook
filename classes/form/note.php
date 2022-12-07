@@ -44,13 +44,27 @@ class note extends moodleform  implements renderable {
      */
     public function definition() {
         $mform = $this->_form;
-        $reset = ($this->_customdata['index']) ? get_string('cancel') : get_string('reset');
-        $resetlabel = ($this->_customdata['index']) ? get_string('cancel') : get_string('notereset', 'local_notebook');
         $mform->setAttributes(['id' => 'noteform'] + $mform->getAttributes());
         $mform->addElement('hidden', 'subjectorigin');
         $mform->setType('subjectorigin', PARAM_TEXT);
         $mform->addElement('hidden', 'noteid');
         $mform->setType('noteid', PARAM_TEXT);
+
+        $buttonarray = [];
+
+        $buttonarray[] = $mform->createElement('cancel', '', get_string('cancel'),
+                ['data-action' => 'cancel',
+                'aria-label' => get_string('cancel'),
+                'id' => 'cancel-add-edit']);
+
+        $buttonarray[] = $mform->createElement('submit', '', get_string('save'),
+            ['data-action' => 'save',
+            'id' => 'savenote',
+            'aria-label' => get_string('notesave', 'local_notebook')]);
+
+        $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'footer']));
+        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
+        $mform->addElement('html', \html_writer::end_div());
 
         $mform->addElement('text', 'subject', '', ['data-required' => 'true', 'maxlength' => 255,
             'aria-label' => get_string('notesubject', 'local_notebook')]);
@@ -60,21 +74,7 @@ class note extends moodleform  implements renderable {
             'aria-label' => get_string('notecontent', 'local_notebook')]);
         $mform->setType('note', PARAM_CLEANHTML);
 
-        $buttonarray = [];
-
-        $buttonarray[] = $mform->createElement('submit', '', get_string('save'),
-                ['data-action' => 'save',
-                'id' => 'savenote',
-                'aria-label' => get_string('notesave', 'local_notebook')]);
-        $buttonarray[] = $mform->createElement('cancel', '', $reset,
-                ['data-action' => 'reset',
-                'aria-label' => $resetlabel,
-                'id' => 'resetnote']);
         // Accessiblity for required fields.
         $mform->addElement('html', \html_writer::span(get_string('formrequiredfields', 'local_notebook'), 'sr-only'));
-
-        $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'footer']));
-        $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
-        $mform->addElement('html', \html_writer::end_div());
     }
 }
