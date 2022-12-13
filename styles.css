@@ -345,6 +345,10 @@
     bottom: 4px;
     right: 8%;
 }
+.notebookcontainer #notebook-table tr,
+.notebookcontainer #notebook-table-index tr {
+    cursor: pointer;
+}
 .notebookcontainer [data-region=view-overview] {
     display: none;
 }
@@ -426,6 +430,9 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+.notebookcontainer [data-region="view-note"] #note-dates td{
+    font-size: 14px;
+}
 .notebookcontainer .blur-content {
     filter: blur(2px);
 }
@@ -477,4 +484,7 @@
 }
 .notebookcontainer [data-region="notebook-index"] form#noteform  #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
     margin-left: auto !important;
+}
+.notebookcontainer .bootstrap-table .fixed-table-container .table thead th .both {
+    filter: brightness(10%);
 }

@@ -67,9 +67,11 @@ define(
             NOTE_FORM_ID: 'noteform',
             VIEW_NOTE: '#notebook-table-index .viewnote',
             NOTE_VIEW: '[data-region="notebook-index"] .view-note',
+            NOTE_TABLE_ROW: '#notebook-table-index tr',
             FOOTER_NOTE_VIEW: '[data-region="footer-container"] [data-region="view-note"]',
             HEADER_NOTE_VIEW: '[data-region="header-container"] [data-region="view-note"]',
-            HEADER_NOTE_DATE: '[data-region="header-container"] .notedate',
+            HEADER_NOTE_CREATED_DATE: '[data-region="header-container"] .notecreateddate',
+            HEADER_NOTE_LAST_MODIFIED_DATE: '[data-region="header-container"] .notelastmodifieddate',
             NOTE_FORM: '[data-region="form-note"] #noteform',
             HEADER_NOTE_DELETE : '[data-region="header-container"] .deletenote',
             HEADER_NOTE_EDIT: '[data-region="header-container"] .editnote',
@@ -121,7 +123,8 @@ define(
          *
          */
         var addBlurContent = () => {
-            let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_DATE + ', ' + SELECTORS.NOTE_VIEW;
+            let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_CREATED_DATE + ', ' +
+                SELECTORS.HEADER_NOTE_LAST_MODIFIED_DATE + ', '+ SELECTORS.NOTE_VIEW;
             $(selectors).addClass('blur-content');
         };
 
@@ -130,7 +133,8 @@ define(
          *
          */
         var removeBlurContent = () => {
-            let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_DATE + ', ' + SELECTORS.NOTE_VIEW;
+            let selectors = SELECTORS.FOOTER_NOTE_VIEW + ', ' + SELECTORS.HEADER_NOTE_CREATED_DATE + ', ' +
+                SELECTORS.HEADER_NOTE_LAST_MODIFIED_DATE + ', '+ SELECTORS.NOTE_VIEW;
             $(selectors).removeClass('blur-content');
         };
 
@@ -160,6 +164,8 @@ define(
                 let data = {};
                 data.subject = result.subject;
                 data.summary = result.summary;
+
+                // Note created datetime.
                 let timestamp = result.created * 1000;
                 let datecreation = new Date(timestamp).toLocaleDateString(document.documentElement.lang, {
                     day : 'numeric',
@@ -167,12 +173,23 @@ define(
                     year : 'numeric'
                 });
                 let timecreation = new Date(timestamp).toLocaleTimeString(document.documentElement.lang);
+
+                // Note last modified datetime.
+                let lastmodifiedtimestamp = result.lastmodified * 1000;
+                let lastmodifieddate = new Date(lastmodifiedtimestamp).toLocaleDateString(document.documentElement.lang, {
+                    day : 'numeric',
+                    month : 'short',
+                    year : 'numeric'
+                });
+                let lastmodifiedtime = new Date(lastmodifiedtimestamp).toLocaleTimeString(document.documentElement.lang);
+
                 Templates.render('local_notebook/note_content', data)
                 .then(function(html) {
                     // Display content.
                     $(SELECTORS.NOTE_VIEW).html(html);
-                    // Display date.
-                    $(SELECTORS.HEADER_NOTE_DATE).html(datecreation + ' ' + timecreation);
+                    // Display dates.
+                    $(SELECTORS.HEADER_NOTE_CREATED_DATE).html(datecreation + ' ' + timecreation);
+                    $(SELECTORS.HEADER_NOTE_LAST_MODIFIED_DATE).html(lastmodifieddate + ' ' + lastmodifiedtime);
                     // Set buttons.
                     $(SELECTORS.HEADER_NOTE_DELETE ).data('noteid', result.id);
                     $(SELECTORS.HEADER_NOTE_EDIT).data('noteid', result.id);
@@ -219,6 +236,10 @@ define(
                 {
                     key: 'displaynote',
                     component: 'local_notebook',
+                },
+                {
+                    key: 'lastmodifieddate',
+                    component: 'local_notebook',
                 }
             ];
 
@@ -231,9 +252,10 @@ define(
                         subject.tags = value.tags;
                         data.push({
                             'id': value.id,
+                            'subjecttext': value.subject,
                             'subject': subject,
                             'contextname': value.contextname,
-                            'created': value.created
+                            'lastmodified': value.lastmodified
                         });
                     });
                     this.$table.bootstrapTable({
@@ -248,9 +270,14 @@ define(
                                 checkbox: true
                             },
                             {
+                                field: 'subjecttext',
+                                visible: false
+                            },
+                            {
                                 field: 'subject',
                                 title: langStrings[0],
                                 sortable: true,
+                                sortName: 'subjecttext',
                                 width: 300,
                                 formatter: function(value) {
                                     let nbtags = value.tags.length;
@@ -270,7 +297,7 @@ define(
                                 sortable: true
                             },
                             {
-                                field: 'created',
+                                field: 'lastmodified',
                                 title: langStrings[2],
                                 sortable: true,
                                 formatter: function(value) {
@@ -281,7 +308,8 @@ define(
                                     });
                                     return today;
                                 },
-                                width: 110
+                                width: 110,
+                                titleTooltip: langStrings[4]
                             },
                             {
                                 field: 'operate',
@@ -524,6 +552,9 @@ define(
                 langStrings[0] + '</div>';
                 $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html(messageHtml);
                 $(SELECTORS.MESSAGE_SUCCESS_CONTAINER + ' .alert button').focus();
+                setTimeout(function() {
+                    $(SELECTORS.MESSAGE_SUCCESS_CONTAINER + ' .alert').fadeOut();
+                }, 10000);
             });
         };
 
@@ -585,12 +616,30 @@ define(
             $(SELECTORS.NOTEINDEX).on('click', SELECTORS.REFRESH_BUTTON, function () {
                 refreshNotes();
             });
-
-            // View note.
-            $(SELECTORS.NOTEINDEX).on('click', SELECTORS.VIEW_NOTE, function() {
-                $(SELECTORS.NOTEINDEX + ' #notebook-table-index tr.selected').removeClass('selected');
-                displayNote($(this).data('noteid'));
-                $(this).closest('tr').addClass('selected');
+            // Note table row click event.
+            $(SELECTORS.NOTEINDEX).on('click', SELECTORS.NOTE_TABLE_ROW + ' td:not(:first-child)', function(e) {
+                if (!$(e.target).hasClass('context-note') &&
+                    !$(e.target).parent().hasClass('context-note')) {
+                    let noteid = $(this).closest('tr').find('.viewnote').data('noteid');
+                    $(SELECTORS.NOTEINDEX + ' #notebook-table-index tr.selected').removeClass('selected');
+                    displayNote(noteid);
+                    $(this).closest('tr').addClass('selected');
+                }
+            });
+            // Note table row checkbox cell click event.
+            $(SELECTORS.NOTEINDEX).on('click', SELECTORS.NOTE_TABLE_ROW + ' td:first-child', function(e) {
+                if($(this).find('.card-views').length) { // card view mode.
+                    if (!$(e.target).is('label, input') &&
+                        !$(e.target).hasClass('context-note') &&
+                        !$(e.target).parent().hasClass('context-note')) {
+                        let noteid = $(this).closest('tr').find('.viewnote').data('noteid');
+                        $(SELECTORS.NOTEINDEX + ' #notebook-table-index tr.selected').removeClass('selected');
+                        displayNote(noteid);
+                        $(this).closest('tr').addClass('selected');
+                    }
+                } else {
+                    $(this).find('input[type="checkbox"]').trigger('click');
+                }
             });
             // Edit note.
             $(SELECTORS.NOTEINDEX).on('click', SELECTORS.HEADER_NOTE_EDIT, function() {

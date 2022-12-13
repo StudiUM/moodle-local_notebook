@@ -42,8 +42,16 @@
         {{>local_notebook/notebook_drawer_view_note_actions}}
         <div class="d-flex justify-content-between">
             <div class="p-2 ml-auto mt-3">
-                <i class="icon fa fa-clock-o mr-1" aria-hidden="true"></i>
-                <span class="notedate"></span>
+                <table id="note-dates">
+                    <tr>
+                        <td class="text-left pr-2">{{#str}} creation, local_notebook {{/str}}</td>
+                        <td class="text-right"><span class="notecreateddate"></span></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left pr-2">{{#str}} lastmodification, local_notebook {{/str}}</td>
+                        <td class="text-right"><span class="notelastmodifieddate"></span></td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
