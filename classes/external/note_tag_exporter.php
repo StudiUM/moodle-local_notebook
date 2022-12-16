@@ -48,6 +48,9 @@ class note_tag_exporter extends \core\external\exporter {
             ),
             'title' => array(
                 'type' => PARAM_RAW
+            ),
+            'tooltip' => array(
+                'type' => PARAM_RAW
             )
         );
     }

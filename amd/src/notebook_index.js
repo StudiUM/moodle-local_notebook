@@ -89,7 +89,8 @@ define(
             DELETE_NOTE_BUTTON: '.deletenote',
             CHECKBOX_LIST_NOTE: '[name="btSelectItem"]',
             CHECKBOX_ALL_NOTE: '[name="btSelectAll"]',
-            TABLE_DELETE_BUTTON: '[data-region="notebook-index"] #remove'
+            TABLE_DELETE_BUTTON: '[data-region="notebook-index"] #remove',
+            TABLE_PAGINATION: '[data-region="notebook-index"] .fixed-table-pagination'
         };
 
         /**
@@ -226,10 +227,6 @@ define(
                     component: 'local_notebook'
                 },
                 {
-                    key: 'notecontext',
-                    component: 'local_notebook',
-                },
-                {
                     key: 'notedate',
                     component: 'local_notebook',
                 },
@@ -254,13 +251,12 @@ define(
                             'id': value.id,
                             'subjecttext': value.subject,
                             'subject': subject,
-                            'contextname': value.contextname,
                             'lastmodified': value.lastmodified
                         });
                     });
                     this.$table.bootstrapTable({
                         locale: document.documentElement.lang,
-                        paginationParts: ['pageInfo', 'pageList'],
+                        paginationParts: ['pageInfo', 'pageSize', 'pageList'],
                         paginationSuccessivelySize: 2,
                         paginationPagesBySide: 1,
                         data: data,
@@ -278,7 +274,6 @@ define(
                                 title: langStrings[0],
                                 sortable: true,
                                 sortName: 'subjecttext',
-                                width: 300,
                                 formatter: function(value) {
                                     let nbtags = value.tags.length;
                                     var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
@@ -292,13 +287,8 @@ define(
                                 }
                             },
                             {
-                                field: 'contextname',
-                                title: langStrings[1],
-                                sortable: true
-                            },
-                            {
                                 field: 'lastmodified',
-                                title: langStrings[2],
+                                title: langStrings[1],
                                 sortable: true,
                                 formatter: function(value) {
                                     var today = new Date(value * 1000).toLocaleDateString(document.documentElement.lang, {
@@ -309,22 +299,32 @@ define(
                                     return today;
                                 },
                                 width: 110,
-                                titleTooltip: langStrings[4]
+                                titleTooltip: langStrings[3]
                             },
                             {
                                 field: 'operate',
                                 title: '',
                                 align: 'center',
+                                width: 35,
                                 formatter: function(value, row) {
                                     return [
                                         '<a class="viewnote" data-noteid="' + row.id + '" ' +
-                                        'href="#notedetailcontainer" title="' + langStrings[3] + '">',
+                                        'href="#notedetailcontainer" title="' + langStrings[2] + '">',
                                         '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
                                         '</a>'
                                     ].join('');
                                 }
                             }]
-                        ]
+                        ],
+                        onPostBody: function() {
+                            // Wrap the second and the third card view for Flexbox.
+                            $(".card-views").each(function() {
+                                $(this).find('.card-view').slice(1, 3).wrapAll('<div class="item-content" />');
+                            });
+
+                            // Init pagination rows per page dropdown.
+                            $(SELECTORS.TABLE_PAGINATION + ' .dropdown-toggle').dropdown();
+                        }
                     });
                 }).fail(notification.exception);
             }).fail(Notification.exception);

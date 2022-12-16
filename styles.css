@@ -8,6 +8,9 @@
     top: 50%;
     z-index: 6;
 }
+.pagelayout-popup .notebookbutton {
+    display: none
+}
 .notebookbutton .rolling {
     display: inline-block;
     cursor: pointer;
@@ -175,15 +178,19 @@
     }
     .notebookcontainer .bootstrap-table tbody tr td .card-views {
         position: relative;
+        display: flex;
+        width: 100%;
     }
-    .notebookcontainer .bootstrap-table tbody tr td .card-view:first-child {
-        float: left;
+    .notebookcontainer .bootstrap-table tbody tr td .card-views .item-content {
+        display: table;
+        table-layout: fixed;
+        width: 92%;
     }
-    .notebookcontainer .bootstrap-table tbody tr td .card-view:last-child {
-        position: absolute;
-        top: 0;
-        right: 10px;
-        font-size: 20px;
+    .notebookcontainer .bootstrap-table tbody tr td .card-views .item-content .card-view {
+        padding-left: 0.5rem!important;
+    }
+    .notebookcontainer .bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {
+        min-width: 15%;
     }
     .notebookcontainer .bootstrap-table tbody tr td .card-view:not(:first-child):not(:last-child) {
         margin-left:25px;
@@ -251,7 +258,7 @@
     padding: 0.25rem;
 }
 .notebookcontainer .bootstrap-table span.subject {
-    max-width: 235px;
+    max-width: 100%;
     display: inline-block;
 }
 .notebookcontainer .bootstrap-table .context-note {
@@ -484,6 +491,9 @@
 }
 .notebookcontainer [data-region="notebook-index"] form#noteform  #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
     margin-left: auto !important;
+}
+.notebookcontainer .bootstrap-table .fixed-table-container .table {
+    table-layout: fixed;
 }
 .notebookcontainer .bootstrap-table .fixed-table-container .table thead th .both {
     filter: brightness(10%);

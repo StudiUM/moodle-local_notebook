@@ -95,6 +95,7 @@ class notebook_exporter extends \core\external\persistent_exporter {
                 array('id' => $course->id)))->out();
             $result->url = $url;
             $result->title = $course->shortname;
+            $result->tooltip = get_string('gotocourse', 'local_notebook').' '.$course->shortname;
             $tags[] = $result;
         }
         if ($this->persistent->get('coursemoduleid') != 0) {
@@ -105,6 +106,7 @@ class notebook_exporter extends \core\external\persistent_exporter {
             $result = new \stdClass();
             $result->url = $cm->url->out();
             $result->title = $cm->name;
+            $result->tooltip = get_string('gotoactivity', 'local_notebook').' '.$cm->name;
             $tags[] = $result;
         }
         if ($this->persistent->get('userid') != 0) {
@@ -115,6 +117,7 @@ class notebook_exporter extends \core\external\persistent_exporter {
             $result = new \stdClass();
             $result->url = $profileurl;
             $result->title = fullname($user);
+            $result->tooltip = get_string('gotoprofile', 'local_notebook').' '.fullname($user);
             $tags[] = $result;
         }
         $values['tags'] = [];

@@ -269,10 +269,6 @@ define(
                     component: 'local_notebook'
                 },
                 {
-                    key: 'notecontext',
-                    component: 'local_notebook',
-                },
-                {
                     key: 'notedate',
                     component: 'local_notebook',
                 },
@@ -300,7 +296,6 @@ define(
                             'id': value.id,
                             'subjecttext': value.subject,
                             'subject': subject,
-                            'contextname': value.contextname,
                             'lastmodified': value.lastmodified
                         });
                     });
@@ -325,27 +320,21 @@ define(
                                 title: langStrings[0],
                                 sortable: true,
                                 sortName: 'subjecttext',
-                                width: 300,
                                 formatter: function(value) {
                                     let nbtags = value.tags.length;
                                     var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
                                     var nbclass = nbtags === 1 ? 'wcn-1' : 'wcn-2';
                                     value.tags.forEach(function(item) {
                                         td += '<span class="badge badge-info text-truncate context-note ' + nbclass
-                                            + '"><a title="' + item.title + '" href="' + item.url + '">'
+                                            + '"><a title="' + item.tooltip + '" href="' + item.url + '">'
                                             + item.title + '</a></span>';
                                     });
                                     return td;
                                 }
                             },
                             {
-                                field: 'contextname',
-                                title: langStrings[1],
-                                sortable: true
-                            },
-                            {
                                 field: 'lastmodified',
-                                title: langStrings[2],
+                                title: langStrings[1],
                                 sortable: true,
                                 formatter: function(value) {
                                     var today = new Date(value * 1000).toLocaleDateString(document.documentElement.lang, {
@@ -356,23 +345,31 @@ define(
                                     return today;
                                 },
                                 width: 110,
-                                titleTooltip: langStrings[4]
+                                titleTooltip: langStrings[3]
                             },
                             {
                                 field: 'operate',
                                 title: '',
                                 align: 'center',
+                                width: 35,
                                 formatter: function(value, row) {
                                     return [
-                                        '<a class="viewnote" data-noteid="' + row.id + '" href="#" title="' + langStrings[3] + '">',
+                                        '<a class="viewnote" data-noteid="' + row.id + '" href="#" title="' + langStrings[2] + '">',
                                         '<i class="fa fa-chevron-right" aria-hidden="true"></i>',
                                         '</a>'
                                     ].join('');
                                 }
                             }]
                         ],
+                        onSearch: function() {
+                            closeNoteListActions();
+                        },
                         onPostBody: function() {
                             displayAddNoteButton();
+                            // Wrap the second and the third card view for Flexbox.
+                            $(".card-views").each(function() {
+                                $(this).find('.card-view').slice(1, 3).wrapAll('<div class="item-content" />');
+                            });
                         }
                     });
                 }).fail(notification.exception);
@@ -394,7 +391,17 @@ define(
                     $(SELECTORS.DRAWER).removeClass('list').addClass('add');
                     resetNoteForm();
                     toggleNoteForm('show');
+                    closeNoteListActions();
                 });
+            }
+        };
+
+        /**
+         * Close note list actions.
+         */
+        var closeNoteListActions = () => {
+            if(!$(SELECTORS.NOTE_LIST_ACTIONS).hasClass('hidden')) {
+                $(SELECTORS.CLOSE_NOTE_LIST_ACTIONS).trigger('click');
             }
         };
 
@@ -879,6 +886,7 @@ define(
                     !$(e.target).parent().hasClass('context-note')) {
                     let noteid = $(this).closest('tr').find('.viewnote').data('noteid');
                     displayNote(noteid);
+                    closeNoteListActions();
                 }
             });
             // Note table row checkbox cell click event.
@@ -889,6 +897,7 @@ define(
                         !$(e.target).parent().hasClass('context-note')) {
                         let noteid = $(this).closest('tr').find('.viewnote').data('noteid');
                         displayNote(noteid);
+                        closeNoteListActions();
                     }
                 } else {
                     $(this).find('input[type="checkbox"]').trigger('click');
