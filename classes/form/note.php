@@ -66,7 +66,7 @@ class note extends moodleform  implements renderable {
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
         $mform->addElement('html', \html_writer::end_div());
 
-        $mform->addElement('text', 'subject', '', ['data-required' => 'true', 'maxlength' => 255,
+        $mform->addElement('text', 'subject', '', ['data-required' => 'true', 'maxlength' => 100,
             'aria-label' => get_string('notesubject', 'local_notebook')]);
         $mform->setType('subject', PARAM_TEXT);
 

@@ -44,7 +44,12 @@
         <div class="container-fluid">
             <div class="row h-100 no-gutters">
                 <div class="col-12 col-xl-7 d-flex flex-column notelistcontainer border pr-2 pl-2  mt-2">
-                    <div>
+                    <div id="notebook-table-index-loading" class="h-100">
+                        <div class="d-flex justify-content-center align-items-center h-100">
+                            <div class="spinner-border" role="status"></div>
+                        </div>
+                    </div>
+                    <div id="notebook-table-index-container" class="hidden">
                         <div id="toolbar-index">
                             <button id="remove" class="btn btn-danger deletenote" disabled>
                                 <i class="fa fa-trash"  aria-hidden="true"></i> {{#str}} delete, core {{/str}}

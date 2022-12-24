@@ -60,7 +60,9 @@ define(
             BODY_CONTAINER: '[data-region="body-container"]',
             FORM_CONTAINER: '[data-region="form-note"]',
             CLOSE_BUTTON: '[data-action="closedrawer"]',
+            NOTE_TABLE_CONTAINER: '#notebook-table-index-container',
             NOTE_TABLE: '#notebook-table-index',
+            NOTE_TABLE_LOADING: '#notebook-table-index-loading',
             REFRESH_BUTTON: 'button[name="refresh"]',
             SAVE_BUTTON: '#savenote',
             CANCEL_BUTTON: '#cancel-add-edit',
@@ -90,7 +92,9 @@ define(
             CHECKBOX_LIST_NOTE: '[name="btSelectItem"]',
             CHECKBOX_ALL_NOTE: '[name="btSelectAll"]',
             TABLE_DELETE_BUTTON: '[data-region="notebook-index"] #remove',
-            TABLE_PAGINATION: '[data-region="notebook-index"] .fixed-table-pagination'
+            TABLE_PAGINATION: '[data-region="notebook-index"] .fixed-table-pagination',
+            NOTE_DETAIL_CONTAINER: '#notedetailcontainer'
+
         };
 
         /**
@@ -98,8 +102,9 @@ define(
          *
          */
         var refreshNotes = () => {
+            let previousPageNumber = this.$table.bootstrapTable('getOptions').pageNumber;
             this.$table.bootstrapTable('destroy');
-            displayNotes();
+            displayNotes(previousPageNumber);
         };
 
         /**
@@ -209,8 +214,9 @@ define(
         /**
          * Display notes.
          *
+         * @param {Number} pageNumber The pagination page number
          */
-        var displayNotes = () => {
+        var displayNotes = (pageNumber) => {
             var promises = [];
 
             promises = ajax.call([{
@@ -260,6 +266,7 @@ define(
                         paginationSuccessivelySize: 2,
                         paginationPagesBySide: 1,
                         data: data,
+                        pageNumber: pageNumber,
                         columns: [
                             [{
                                 field: 'state',
@@ -324,6 +331,12 @@ define(
 
                             // Init pagination rows per page dropdown.
                             $(SELECTORS.TABLE_PAGINATION + ' .dropdown-toggle').dropdown();
+
+                            // Hide notebook table loading.
+                            $(SELECTORS.NOTE_TABLE_LOADING).addClass('hidden');
+
+                            // Display notebook table.
+                            $(SELECTORS.NOTE_TABLE_CONTAINER).removeClass('hidden');
                         }
                     });
                 }).fail(notification.exception);
@@ -636,6 +649,7 @@ define(
                         $(SELECTORS.NOTEINDEX + ' #notebook-table-index tr.selected').removeClass('selected');
                         displayNote(noteid);
                         $(this).closest('tr').addClass('selected');
+                        window.scrollTo(0, $(SELECTORS.NOTE_DETAIL_CONTAINER).position().top);
                     }
                 } else {
                     $(this).find('input[type="checkbox"]').trigger('click');

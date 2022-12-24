@@ -137,8 +137,9 @@ define(
          *
          */
         var refreshNotes = () => {
+            let previousPageNumber = this.$table.bootstrapTable('getOptions').pageNumber;
             this.$table.bootstrapTable('destroy');
-            displayNotes();
+            displayNotes(previousPageNumber);
         };
 
         /**
@@ -251,8 +252,9 @@ define(
         /**
          * Display notes.
          *
+         * @param {Number} pageNumber The pagination page number
          */
-        var displayNotes = () => {
+        var displayNotes = (pageNumber) => {
             var promises = [];
 
             promises = ajax.call([{
@@ -306,6 +308,7 @@ define(
                         paginationPagesBySide: 1,
                         data: data,
                         height: tableheight,
+                        pageNumber: pageNumber,
                         columns: [
                             [{
                                 field: 'state',
@@ -383,7 +386,6 @@ define(
         var displayAddNoteButton = () => {
             if (!$(SELECTORS.NOTE_TABLE_CONTAINER).find('.fixed-table-container .addnote').length) {
                 let addnotebtn = $(SELECTORS.ADD_BUTTON_TO_CLONE).clone().removeClass('hidden');
-                window.console.log(addnotebtn);
                 $(SELECTORS.NOTE_TABLE_CONTAINER).find('.fixed-table-container').append(addnotebtn);
 
                 // Add note click event .
@@ -442,6 +444,7 @@ define(
                     list.push($(this).val());
                 });
                 $(SELECTORS.CONFIRM_DELETE_BUTTON_MULTI).data('noteid', list);
+                $(SELECTORS.CONFIRM_DELETE_BUTTON_MULTI).focus();
             } else {
                 let tohide = SELECTORS.CONFIRM_TEXT_MULTI + ', ' + SELECTORS.CONFIRM_DELETE_BUTTON_MULTI + ',' +
                     SELECTORS.CANCEL_DELETE_BUTTON_MULTI;
@@ -451,6 +454,7 @@ define(
                 $(toshow).removeClass('hidden');
                 $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).data('noteid',
                 $(SELECTORS.HEADER_NOTE_DELETE).data('noteid'));
+                $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).focus();
             }
         };
 
@@ -592,6 +596,7 @@ define(
                         // Close dialogue.
                         closeConfirmDialogue('multiple', false);
                         if (action === 'confirm-delete-single') {
+                            toggleNoteForm('hide');
                             hideNoteView(false);
                         }
                         // Display success message.
@@ -664,6 +669,7 @@ define(
             $(SELECTORS.NOTE_VIEW).removeAttr('aria-hidden');
             $(SELECTORS.BODY_LIST).addClass('hidden');
             $(SELECTORS.BODY_LIST).attr('aria-hidden', true);
+            $(SELECTORS.NOTE_TABLE_CONTAINER).addClass('hidden');
         };
 
         /**
@@ -875,8 +881,8 @@ define(
 
             // Back to list.
             $(SELECTORS.DRAWER).on('click', SELECTORS.BACK_TO_LIST, function() {
-                hideNoteView(SELECTORS.VIEW_NOTE + '[data-noteid="' + $(this).data('noteid') + '"]');
                 toggleNoteForm('hide');
+                hideNoteView(SELECTORS.VIEW_NOTE + '[data-noteid="' + $(this).data('noteid') + '"]');
                 $(SELECTORS.DRAWER).removeClass('view').addClass('list');
             });
 
