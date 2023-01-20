@@ -32,7 +32,7 @@ use tool_usertours\helper;
  */
 function local_notebook_standard_after_main_region_html() {
     global $PAGE;
-    if ($PAGE->url->get_path() !== "/local/notebook/index.php") {
+    if (strpos($PAGE->url->get_path(), "/local/notebook/index.php") === false) {
         return  \local_notebook\helper::render_notebook_drawer($PAGE);
     }
 }
@@ -45,7 +45,7 @@ function local_notebook_standard_after_main_region_html() {
  */
 function local_notebook_before_standard_top_of_body_html() {
     global $PAGE;
-    if ($PAGE->url->get_path() !== "/local/notebook/index.php") {
+    if (strpos($PAGE->url->get_path(), "/local/notebook/index.php") === false) {
         return  \local_notebook\helper::render_notebook_button();
     }
 }
