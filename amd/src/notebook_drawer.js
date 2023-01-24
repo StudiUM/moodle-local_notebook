@@ -29,9 +29,9 @@ require.config({
         'bootstrapTableLocaleMobile': ['jquery', 'bootstrapTable']
     },
     paths: {
-        bootstrapTable: '/local/notebook/amd/build/bootstrap-table.min',
-        bootstrapTableLocale: '/local/notebook/amd/build/bootstrap-table-locale-all.min',
-        bootstrapTableLocaleMobile: '/local/notebook/amd/build/bootstrap-table-mobile.min'
+        bootstrapTable: M.cfg.wwwroot + '/local/notebook/amd/build/bootstrap-table.min',
+        bootstrapTableLocale: M.cfg.wwwroot + '/local/notebook/amd/build/bootstrap-table-locale-all.min',
+        bootstrapTableLocaleMobile: M.cfg.wwwroot + '/local/notebook/amd/build/bootstrap-table-mobile.min'
     }
 });
 
