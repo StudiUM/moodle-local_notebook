@@ -368,19 +368,9 @@
 [data-region=right-hand-notebook-drawer] #add-note-form-container form {
     height: 90%;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor,
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor],
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] > div,
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap,
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap .editor_atto {
-    height: 100%;
-}
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor .editor_atto_content_wrap {
-    height: 85%;
-}
+
 [data-region=right-hand-notebook-drawer] #fitem_id_summary_editor #id_summary_editoreditable {
     min-height: auto !important;
-    height: 85% !important;
     position: absolute;
     resize: none;
 }
@@ -396,6 +386,14 @@
     font-size: 13px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
+}
+
+.message-app .editor_atto_wrap a {
+    color: #0f6cbf !important;
+}
+
+.summarynote a {
+    color: #0f6cbf !important;
 }
 
 @media screen and (max-width:480px) and (orientation: portrait) {

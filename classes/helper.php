@@ -29,6 +29,7 @@ use context_course;
 use context_system;
 use context_user;
 use \local_notebook\local_notebook_posts;
+use moodle_url;
 
 /**
  * Notebook helper class.
@@ -132,7 +133,7 @@ class helper {
             $courseid = $PAGE->course->id;
         } else if ($context->contextlevel == CONTEXT_COURSE) {
             $courseid = $PAGE->course->id;
-            if ($PAGE->url->get_path() == '/user/view.php' && $PAGE->url->get_param('id')) {
+            if ($PAGE->url->get_path() === (new moodle_url('/user/view.php'))->get_path() && $PAGE->url->get_param('id')) {
                 $relateduserid = $PAGE->url->get_param('id');
             }
             // Frontpage.
