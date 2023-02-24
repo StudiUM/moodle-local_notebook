@@ -117,8 +117,17 @@ define(
             var tagshtml = '';
 
             tags.forEach(function(item) {
-                tagshtml += '<span class="badge badge-info text-truncate context-note">'
-                    + '<a title="' + item.title + '" href="' + item.url + '">' + item.title + '</a></span>';
+                // TODO: Replace with mustache rendering.
+                // If item has a # it means course or activity has been deleted.
+                let badge = 'badge-info';
+                if (item.url === '#') {
+                    badge = 'badge-secondary';
+                    tagshtml += '<span class="badge ' + badge + ' text-truncate context-note" title="' + item.tooltip + '">'
+                    + item.title + '</span>';
+                } else {
+                    tagshtml += '<span class="badge ' + badge + ' text-truncate context-note">'
+                        + '<a title="' + item.tooltip + '" href="' + item.url + '">' + item.title + '</a></span>';
+                }
             });
 
             return tagshtml;
@@ -246,6 +255,7 @@ define(
                 }
             ];
 
+            // eslint-disable-next-line promise/always-return
             str.get_strings(stringkeys).then(function(langStrings) {
                 let data = [];
                 promises[0].done(function (result) {
@@ -286,9 +296,18 @@ define(
                                     var td = "<span class='text-truncate subject'>" + value.text + "</span><br>";
                                     var nbclass = nbtags === 1 ? 'wcn-1' : 'wcn-2';
                                     value.tags.forEach(function(item) {
-                                        td += '<span class="badge badge-info text-truncate context-note ' + nbclass
-                                            + '"><a title="' + item.title + '" href="' + item.url + '">'
-                                            + item.title + '</a></span>';
+                                        // TODO: Replace with mustache rendering.
+                                        // If item has a # it means course or activity has been deleted.
+                                        let badge = 'badge-info';
+                                        if (item.url === '#') {
+                                            badge = 'badge-secondary';
+                                            td += '<span class="badge ' + badge + ' text-truncate context-note ' + nbclass
+                                            + '" title="' + item.tooltip + '">' + item.title + '</span>';
+                                        } else {
+                                            td += '<span class="badge ' + badge + ' text-truncate context-note ' + nbclass
+                                                + '"><a title="' + item.tooltip + '" href="' + item.url + '">'
+                                                + item.title + '</a></span>';
+                                        }
                                     });
                                     return td;
                                 }

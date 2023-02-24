@@ -39,7 +39,7 @@ class notebook_viewed extends \core\event\notes_viewed {
      * Set basic properties for the event.
      */
     protected function init() {
-        $this->data['objecttable'] = 'post';
+        $this->data['objecttable'] = 'local_notebook_posts';
         $this->data['crud'] = 'r';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }

@@ -30,6 +30,7 @@ use moodle_exception;
 use context_course;
 use context_system;
 use core_course_category;
+use \local_notebook\local_notebook_posts;
 
 /**
  * Class for notebook api.
@@ -55,13 +56,14 @@ class api {
         global $USER, $DB;
         self::can_use_notebook();
         // Init note persistence.
-        $notebook = new \local_notebook\post();
+        $notebook = new local_notebook_posts();
         if ($courseid) {
             $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
             if (!core_course_category::can_view_course_info($course)) {
                 throw new \moodle_exception('usercannotaccesscourse', 'local_notebook');
             }
             $notebook->set('courseid', $course->id);
+            $notebook->set('coursename', $course->shortname);
         }
 
         if ($userid) {
@@ -89,6 +91,7 @@ class api {
             }
             $coursemoduleid = $cm->id;
             $notebook->set('coursemoduleid', $coursemoduleid);
+            $notebook->set('activityname', $cm->name);
         }
 
         if (trim($note) == '') {
@@ -124,8 +127,8 @@ class api {
     /**
      * Read note.
      *
-     * @param post|int $noteorid The note object or the note id
-     * @return post
+     * @param local_notebook_posts|int $noteorid The note object or the note id
+     * @return local_notebook_posts
      */
     public static function read_note($noteorid) {
         global $USER;
@@ -133,7 +136,7 @@ class api {
         self::can_use_notebook();
         $note = $noteorid;
         if (!is_object($note)) {
-            $note = new post($noteorid);
+            $note = new local_notebook_posts($noteorid);
         }
 
         if ($USER->id != $note->get('usermodified')) {
@@ -145,7 +148,7 @@ class api {
     /**
      * Log the note viewed event.
      *
-     * @param post|int $noteorid The note object or note id
+     * @param local_notebook_posts|int $noteorid The note object or note id
      * @return bool
      */
     public static function note_viewed($noteorid) {
@@ -154,7 +157,7 @@ class api {
         self::can_use_notebook();
         $note = $noteorid;
         if (!is_object($note)) {
-            $note = new post($noteorid);
+            $note = new local_notebook_posts($noteorid);
         }
 
         if ($USER->id != $note->get('usermodified')) {
@@ -185,7 +188,7 @@ class api {
         global $USER, $DB;
         self::can_use_notebook();
         // Init note persistence.
-        $notebook = new \local_notebook\post($noteid);
+        $notebook = new local_notebook_posts($noteid);
         if (!$notebook->get('id')) {
             throw new \moodle_exception('notenotfound', 'local_notebook');
         }
@@ -224,7 +227,7 @@ class api {
         global $USER, $DB;
         self::can_use_notebook();
         // Init note persistence.
-        $notebook = new \local_notebook\post($noteid);
+        $notebook = new local_notebook_posts($noteid);
         if (!$notebook->get('id')) {
             throw new \moodle_exception('notenotfound', 'local_notebook');
         }
@@ -281,30 +284,26 @@ class api {
                   SELECT DISTINCT(id)
                     FROM (
                  (SELECT 1 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.courseid = :courseid
                          AND p.coursemoduleid = 0
                          AND p.userid = 0
-                         AND p.usermodified = :userid1
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid1)
                    UNION
                  (SELECT 2 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.courseid = :courseid2
                          AND (p.coursemoduleid <> 0 OR p.userid <> 0)
-                         AND p.usermodified = :userid2
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid2)
                    UNION
                  (SELECT 3 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.courseid <> 0
-                         AND p.usermodified = :userid3
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid3)
                    UNION
                  (SELECT 4 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
-                   WHERE p.usermodified = :userid4
-                         AND p.module = 'notebook')) a
+                    FROM {" . local_notebook_posts::TABLE . "} p
+                   WHERE p.usermodified = :userid4)) a
                 ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['courseid'] = $courseid;
                 $params['courseid2'] = $courseid;
@@ -319,29 +318,25 @@ class api {
                   SELECT DISTINCT(id)
                     FROM (
                  (SELECT 1 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid = :relateduserid
                          AND p.courseid = 0
-                         AND p.usermodified = :userid1
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid1)
                    UNION
                  (SELECT 2 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid = :relateduserid2
                          AND p.courseid <> 0
-                         AND p.usermodified = :userid2
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid2)
                    UNION
                  (SELECT 3 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid <> 0
-                         AND p.usermodified = :userid3
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid3)
                    UNION
                  (SELECT 4 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
-                   WHERE p.usermodified = :userid4
-                         AND p.module = 'notebook')) a
+                    FROM {" . local_notebook_posts::TABLE . "} p
+                   WHERE p.usermodified = :userid4)) a
                 ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['relateduserid'] = $userid;
                 $params['relateduserid2'] = $userid;
@@ -356,28 +351,24 @@ class api {
                   SELECT DISTINCT(id)
                     FROM (
                  (SELECT 1 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid = :relateduserid
                          AND p.courseid = :courseid
-                         AND p.usermodified = :userid1
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid1)
                    UNION
                  (SELECT 2 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid = :relateduserid2
-                         AND p.usermodified = :userid2
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid2)
                    UNION
                  (SELECT 3 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid <> 0
-                         AND p.usermodified = :userid3
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid3)
                    UNION
                  (SELECT 4 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
-                   WHERE p.usermodified = :userid4
-                         AND p.module = 'notebook')) a
+                    FROM {" . local_notebook_posts::TABLE . "} p
+                   WHERE p.usermodified = :userid4)) a
                 ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['relateduserid'] = $userid;
                 $params['relateduserid2'] = $userid;
@@ -393,41 +384,35 @@ class api {
                   SELECT DISTINCT(id)
                     FROM (
                  (SELECT 1 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.coursemoduleid = :coursemoduleid
-                         AND p.usermodified = :userid1
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid1)
                    UNION
                  (SELECT 2 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.coursemoduleid = 0
                          AND  p.courseid = :courseid
-                         AND p.usermodified = :userid2
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid2)
                    UNION
                  (SELECT 3 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.coursemoduleid <> 0
                          AND  p.courseid = :courseid2
-                         AND p.usermodified = :userid3
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid3)
                    UNION
                  (SELECT 4 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.coursemoduleid <> 0
-                         AND p.usermodified = :userid4
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid4)
                    UNION
                  (SELECT 5 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.courseid <> 0
-                         AND p.usermodified = :userid5
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid5)
                    UNION
                  (SELECT 6 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
-                   WHERE p.usermodified = :userid6
-                         AND p.module = 'notebook')) a
+                    FROM {" . local_notebook_posts::TABLE . "} p
+                   WHERE p.usermodified = :userid6)) a
                 ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $cm = get_coursemodule_from_id('', $coursemoduleid, 0, true, MUST_EXIST);
                 $params['coursemoduleid'] = $cm->id;
@@ -445,17 +430,15 @@ class api {
                   SELECT DISTINCT(id)
                     FROM (
                  (SELECT 1 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
+                    FROM {" . local_notebook_posts::TABLE . "} p
                    WHERE p.userid = 0
                          AND p.courseid = 0
                          AND p.coursemoduleid = 0
-                         AND p.usermodified = :userid1
-                         AND p.module = 'notebook')
+                         AND p.usermodified = :userid1)
                    UNION
                  (SELECT 2 as ranking, p.*
-                    FROM {" . \local_notebook\post::TABLE . "} p
-                   WHERE p.usermodified = :userid2
-                         AND p.module = 'notebook')) a
+                    FROM {" . local_notebook_posts::TABLE . "} p
+                   WHERE p.usermodified = :userid2)) a
                 ORDER BY a.ranking ASC, a.created DESC, a.id DESC";
                 $params['userid1'] = $USER->id;
                 $params['userid2'] = $USER->id;

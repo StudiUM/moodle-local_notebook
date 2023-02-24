@@ -26,6 +26,7 @@
 namespace local_notebook;
 
 use context_user;
+use \local_notebook\local_notebook_posts;
 
 /**
  * Notebook helper class.
@@ -194,6 +195,7 @@ class helper {
      */
     public static function has_to_display_notebook() {
         global $PAGE;
+
         if (in_array($PAGE->pagelayout,
             ['maintenance',
             'print',
@@ -217,10 +219,7 @@ class helper {
      */
     public static function count_notes($userid, $courseid, $coursemoduleid) {
         global $USER, $DB;
-        $params = ['usermodified' => $USER->id,
-            'module' => \local_notebook\post::MODULE,
-            'publishstate' => \local_notebook\post::PUBLISHSTATE
-        ];
+        $params['usermodified'] = $USER->id;
         if ($userid) {
             $params['userid'] = $userid;
         } else if ($coursemoduleid) {
@@ -234,6 +233,6 @@ class helper {
             $params['courseid'] = 0;
 
         }
-        return \local_notebook\post::count_records($params);
+        return local_notebook_posts::count_records($params);
     }
 }

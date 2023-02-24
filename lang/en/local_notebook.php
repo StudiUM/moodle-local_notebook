@@ -23,18 +23,20 @@
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+$string['activitydeleted'] = '{$a} activity has been deleted';
 $string['addbuttontitle'] = 'Add note';
 $string['backtolist'] = 'Back to notes list';
 $string['cannotusenotebook'] = 'You cannot use the notebook on this page.';
 $string['confirmdeletemultiplenotes'] = 'Are you sure you would like to delete the selected notes?';
 $string['confirmdeletesinglenote'] = 'Are you sure you would like to delete this note?';
+$string['coursedeleted'] = '{$a} course has been deleted';
 $string['coursedifferentfromcmcourse'] = 'The course given is different from the course of course module.';
 $string['creation'] = 'Creation';
 $string['displaynote'] = 'Display the note';
 $string['formrequiredfields'] = 'The subject and content fields of the note are mandatory';
-$string['gotoactivity'] = 'Go to the activity';
-$string['gotocourse'] = 'Go to the course';
-$string['gotoprofile'] = 'Go to the profile';
+$string['gotoactivity'] = 'Go to the activity {$a}';
+$string['gotocourse'] = 'Go to the course {$a}';
+$string['gotoprofile'] = 'Go to the profile {$a}';
 $string['lastmodification'] = 'Last modification';
 $string['lastmodifieddate'] = 'Date of last modification';
 $string['notenotfound'] = 'The note is not found.';

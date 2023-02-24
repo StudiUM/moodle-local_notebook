@@ -34,7 +34,7 @@ use external_function_parameters;
 use external_value;
 use external_multiple_structure;
 use \local_notebook\api;
-use \local_notebook\post;
+use \local_notebook\local_notebook_posts;
 
 /**
  * External API class.
@@ -399,7 +399,7 @@ class external extends external_api {
         $results = array();
         foreach ($records as $record) {
             unset($record->ranking);
-            $note = new post($record->id);
+            $note = new local_notebook_posts($record->id);
             $exporter = new \local_notebook\external\notebook_exporter($note, array('context' => context_system::instance()));
             $r = $exporter->export($output);
             array_push($results, $r);

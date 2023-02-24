@@ -29,6 +29,7 @@ global $CFG;
 require_once($CFG->dirroot . '/webservice/tests/helpers.php');
 
 use local_notebook\external;
+use local_notebook\local_notebook_posts;
 
 /**
  * External testcase.
@@ -152,7 +153,7 @@ class external_test extends \externallib_advanced_testcase {
         $sink = $this->redirectEvents();
         $result = external::add_note('<p>My note</p>', 'My subject', 0, 0, 0);
         $this->assertNotEmpty($result);
-        $note = new \local_notebook\post($result);
+        $note = new local_notebook_posts($result);
         $this->assertEquals(0, $note->get('userid'));
         $this->assertEquals(0, $note->get('courseid'));
         $this->assertEquals(0, $note->get('coursemoduleid'));
@@ -174,7 +175,7 @@ class external_test extends \externallib_advanced_testcase {
         $sink = $this->redirectEvents();
         $result = external::add_note('<p>My note for user</p>', 'My subject for user', $this->user->id, 0, 0);
         $this->assertNotEmpty($result);
-        $note = new \local_notebook\post($result);
+        $note = new local_notebook_posts($result);
         $this->assertEquals($this->user->id, $note->get('userid'));
         $this->assertEquals(0, $note->get('courseid'));
         $this->assertEquals(0, $note->get('coursemoduleid'));
@@ -198,7 +199,7 @@ class external_test extends \externallib_advanced_testcase {
         $result = external::add_note('<p>My note for user in course</p>', 'My subject for user in course',
             $this->student2->id, $this->course->id, 0);
         $this->assertNotEmpty($result);
-        $note = new \local_notebook\post($result);
+        $note = new local_notebook_posts($result);
         $this->assertEquals($this->student2->id, $note->get('userid'));
         $this->assertEquals($this->course->id, $note->get('courseid'));
         $this->assertEquals(0, $note->get('coursemoduleid'));
@@ -222,7 +223,7 @@ class external_test extends \externallib_advanced_testcase {
         $sink = $this->redirectEvents();
         $result = external::add_note('<p>My note in course</p>', 'My subject in course', 0, $this->course->id, 0);
         $this->assertNotEmpty($result);
-        $note = new \local_notebook\post($result);
+        $note = new local_notebook_posts($result);
         $this->assertEquals(0, $note->get('userid'));
         $this->assertEquals($this->course->id, $note->get('courseid'));
         $this->assertEquals(0, $note->get('coursemoduleid'));
@@ -246,7 +247,7 @@ class external_test extends \externallib_advanced_testcase {
         $result = external::add_note('<p>My note in course module</p>', 'My subject in course module', 0,
             $this->course->id, $this->cm->id);
         $this->assertNotEmpty($result);
-        $note = new \local_notebook\post($result);
+        $note = new local_notebook_posts($result);
         $this->assertEquals(0, $note->get('userid'));
         $this->assertEquals($this->course->id, $note->get('courseid'));
         $this->assertEquals($this->cm->id, $note->get('coursemoduleid'));
@@ -288,7 +289,7 @@ class external_test extends \externallib_advanced_testcase {
         $result = external::add_note('<p>My note</p>', 'My subject', 0, 0, 0);
         // Login with another user.
         $this->setUser($this->student);
-        $this->expectExceptionMessage("Can't find data record in database table post");
+        $this->expectExceptionMessage("Can't find data record in database table local_notebook_posts");
         $result = external::update_note(585, '<p>My note updated</p>', 'My subject updated');
     }
 
@@ -304,7 +305,7 @@ class external_test extends \externallib_advanced_testcase {
         $sink = $this->redirectEvents();
         $updated = external::update_note($result, '<p>My note updated</p>', 'My subject updated');
         $this->assertNotEmpty($result);
-        $note = new \local_notebook\post($result);
+        $note = new local_notebook_posts($result);
         $this->assertEquals(0, $note->get('userid'));
         $this->assertEquals(0, $note->get('courseid'));
         $this->assertEquals(0, $note->get('coursemoduleid'));
@@ -344,7 +345,7 @@ class external_test extends \externallib_advanced_testcase {
         $result = external::add_note('<p>My note</p>', 'My subject', 0, 0, 0);
         // Login with another user.
         $this->setUser($this->student);
-        $this->expectExceptionMessage("Can't find data record in database table post");
+        $this->expectExceptionMessage("Can't find data record in database table local_notebook_posts");
         $result = external::delete_notes([585]);
     }
 
@@ -373,8 +374,8 @@ class external_test extends \externallib_advanced_testcase {
         $expmsg = "The user with id '".$this->student->id."' deleted the note with id '".$noteid2."'.";
 
         try {
-            $note1 = new \local_notebook\post($noteid);
-            $note2 = new \local_notebook\post($noteid2);
+            $note1 = new local_notebook_posts($noteid);
+            $note2 = new local_notebook_posts($noteid2);
             $this->fail('The notes are not deleted');
         } catch (\Exception $e) {
             // All is good.

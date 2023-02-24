@@ -25,6 +25,7 @@
 namespace local_notebook\external;
 
 use renderer_base;
+use \local_notebook\local_notebook_posts;
 
 /**
  * Class for exporting note data.
@@ -42,7 +43,7 @@ class notebook_exporter extends \core\external\persistent_exporter {
      * @return string
      */
     protected static function define_class() {
-        return \local_notebook\post::class;
+        return local_notebook_posts::class;
     }
 
     /**
@@ -87,26 +88,41 @@ class notebook_exporter extends \core\external\persistent_exporter {
         $values = [];
         $tags = [];
         $values['contextname'] = get_string('site');
-        if ($this->persistent->get('courseid') != 0) {
+        if ($this->persistent->get('courseid') != 0 || !empty($this->persistent->get('coursename'))) {
             $values['contextname'] = get_string('course');
-            $course = $DB->get_record('course', array('id' => $this->persistent->get('courseid')), '*', MUST_EXIST);
+            $course = $DB->get_record('course', ['id' => $this->persistent->get('courseid')], '*', IGNORE_MISSING);
             $result = new \stdClass();
-            $url = (new \moodle_url('/course/view.php',
-                array('id' => $course->id)))->out();
-            $result->url = $url;
-            $result->title = $course->shortname;
-            $result->tooltip = get_string('gotocourse', 'local_notebook').' '.$course->shortname;
+            if (!$course) {
+                $coursename = $this->persistent->get('coursename');
+                $result->url = '#';
+                $result->title = $coursename;
+                $result->tooltip = get_string('coursedeleted', 'local_notebook', $coursename);
+            } else {
+                $url = (new \moodle_url('/course/view.php',
+                    ['id' => $course->id]))->out();
+                $result->url = $url;
+                $result->title = $course->shortname;
+                $result->tooltip = get_string('gotocourse', 'local_notebook', $course->shortname);
+            }
             $tags[] = $result;
         }
-        if ($this->persistent->get('coursemoduleid') != 0) {
+        if ($this->persistent->get('coursemoduleid') != 0 || !empty($this->persistent->get('activityname'))) {
             $values['contextname'] = get_string('activity');
-            $cm = get_coursemodule_from_id('', $this->persistent->get('coursemoduleid'), 0, true, MUST_EXIST);
-            $modinfo = get_fast_modinfo($cm->course);
-            $cm = $modinfo->instances[$cm->modname][$cm->instance];
+            $cm = get_coursemodule_from_id('', $this->persistent->get('coursemoduleid'), 0, true, IGNORE_MISSING);
             $result = new \stdClass();
-            $result->url = $cm->url->out();
-            $result->title = $cm->name;
-            $result->tooltip = get_string('gotoactivity', 'local_notebook').' '.$cm->name;
+            // If no cm found, it means course module has been deleted, then get name from persistent table.
+            if (!$cm) {
+                $cmname = $this->persistent->get('activityname');
+                $result->url = '#';
+                $result->title = $cmname;
+                $result->tooltip = get_string('activitydeleted', 'local_notebook', $cmname);
+            } else {
+                $modinfo = get_fast_modinfo($cm->course);
+                $cm = $modinfo->instances[$cm->modname][$cm->instance];
+                $result->url = $cm->url->out();
+                $result->title = $cm->name;
+                $result->tooltip = get_string('gotoactivity', 'local_notebook', $cm->name);
+            }
             $tags[] = $result;
         }
         if ($this->persistent->get('userid') != 0) {
@@ -117,7 +133,7 @@ class notebook_exporter extends \core\external\persistent_exporter {
             $result = new \stdClass();
             $result->url = $profileurl;
             $result->title = fullname($user);
-            $result->tooltip = get_string('gotoprofile', 'local_notebook').' '.fullname($user);
+            $result->tooltip = get_string('gotoprofile', 'local_notebook', fullname($user));
             $tags[] = $result;
         }
         $values['tags'] = [];

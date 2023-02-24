@@ -14,15 +14,6 @@
 // You should have received a copy of the GNU General Public License
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
-/**
- * Post table persistent.
- *
- * @package    local_notebook
- * @copyright  2021 Université de Montréal
- * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
- * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
- */
-
 namespace local_notebook;
 
 use context_user;
@@ -30,23 +21,17 @@ use lang_string;
 use \core\persistent;
 
 /**
- * Post table persistent class.
+ * Local notebook posts persistent table class.
  *
  * @package    local_notebook
  * @copyright  2021 Université de Montréal
  * @author     Issam Taboubi <issam.taboubi@umontreal.ca>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-class post extends persistent {
+class local_notebook_posts extends persistent {
 
     /** The table name. */
-    const TABLE = 'post';
-
-    /** The module name. */
-    const MODULE = 'notebook';
-
-    /** Publish state */
-    const PUBLISHSTATE = 'site';
+    const TABLE = 'local_notebook_posts';
 
     /**
      * Return the definition of the properties of this model.
@@ -54,77 +39,56 @@ class post extends persistent {
      * @return array
      */
     protected static function define_properties() {
-        return array(
-            'userid' => array(
+        return [
+            'userid' => [
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'courseid' => array(
+            ],
+            'courseid' => [
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'groupid' => array(
+            ],
+            'coursemoduleid' => [
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'moduleid' => array(
+            ],
+            'created' => [
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'coursemoduleid' => array(
+            ],
+            'lastmodified' => [
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'created' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'lastmodified' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'rating' => array(
-                'type' => PARAM_INT,
-                'default' => 0
-            ),
-            'module' => array(
-                'type' => PARAM_TEXT,
-                'default' => self::MODULE
-            ),
-            'publishstate' => array(
-                'type' => PARAM_TEXT,
-                'default' => self::PUBLISHSTATE
-            ),
-            'subject' => array(
+            ],
+            'coursename' => [
                 'type' => PARAM_TEXT,
                 'default' => ''
-            ),
-            'summary' => array(
-                'type' => PARAM_CLEANHTML,
-                'default' => '',
-            ),
-            'content' => array(
-                'type' => PARAM_CLEANHTML,
-                'default' => '',
-            ),
-            'uniquehash' => array(
+            ],
+            'activityname' => [
                 'type' => PARAM_TEXT,
+                'default' => ''
+            ],
+            'subject' => [
+                'type' => PARAM_TEXT,
+                'default' => ''
+            ],
+            'summary' => [
+                'type' => PARAM_CLEANHTML,
                 'default' => '',
-            ),
-            'summaryformat' => array(
+            ],
+            'summaryformat' => [
                 'type' => PARAM_INT,
                 'default' => FORMAT_HTML
-            ),
-            'format' => array(
+            ],
+            'format' => [
                 'type' => PARAM_INT,
                 'default' => 0
-            ),
-            'attachment' => array(
-                'type' => PARAM_TEXT,
-                'null' => NULL_ALLOWED,
-                'default' => null
-            )
-        );
+            ],
+            'usermodified' => [
+                'type' => PARAM_INT,
+                'null' => NULL_NOT_ALLOWED
+            ],
+        ];
     }
 
     /**

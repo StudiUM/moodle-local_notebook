@@ -39,7 +39,7 @@ class notebook_deleted extends \core\event\note_deleted {
      * Set basic properties for the event.
      */
     protected function init() {
-        $this->data['objecttable'] = 'post';
+        $this->data['objecttable'] = 'local_notebook_posts';
         $this->data['crud'] = 'd';
         $this->data['edulevel'] = self::LEVEL_OTHER;
     }
