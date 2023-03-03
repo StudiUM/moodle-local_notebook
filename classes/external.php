@@ -77,14 +77,20 @@ class external extends external_api {
             'A subject',
             VALUE_REQUIRED
         );
-
-        $params = array(
+        $itemid = new external_value(
+            PARAM_INT,
+            'Item id from draft editor',
+            VALUE_DEFAULT,
+            0,
+        );
+        $params = [
             'note' => $note,
             'subject' => $subject,
             'userid' => $userid,
             'courseid' => $courseid,
             'coursemoduleid' => $coursemoduleid,
-        );
+            'itemid' => $itemid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -96,17 +102,19 @@ class external extends external_api {
      * @param int $userid The user ID.
      * @param int $courseid The course ID.
      * @param int $coursemoduleid The course module ID.
+     * @param int $itemid Item id coming from draft editor (form hidden element).
      * @return int note id
      */
-    public static function add_note($note, $subject, $userid, $courseid, $coursemoduleid) {
+    public static function add_note($note, $subject, $userid, $courseid, $coursemoduleid, $itemid = 0) {
         global $USER, $PAGE;
-        $params = self::validate_parameters(self::add_note_parameters(), array(
+        $params = self::validate_parameters(self::add_note_parameters(), [
             'userid' => $userid,
             'courseid' => $courseid,
             'coursemoduleid' => $coursemoduleid,
             'note' => $note,
-            'subject' => $subject
-        ));
+            'subject' => $subject,
+            'itemid' => $itemid,
+        ]);
         $note = $params['note'];
         parse_str($params['note'], $data);
         if (is_array($data) && isset($data['note'])) {
@@ -118,7 +126,9 @@ class external extends external_api {
             $params['subject'],
             $params['userid'],
             $params['courseid'],
-            $params['coursemoduleid']);
+            $params['coursemoduleid'],
+            $params['itemid'],
+        );
     }
 
     /**
@@ -151,12 +161,18 @@ class external extends external_api {
             'A subject',
             VALUE_REQUIRED
         );
-
-        $params = array(
+        $itemid = new external_value(
+            PARAM_INT,
+            'Item id from draft editor',
+            VALUE_DEFAULT,
+            0,
+        );
+        $params = [
             'noteid' => $noteid,
             'note' => $note,
-            'subject' => $subject
-        );
+            'subject' => $subject,
+            'itemid' => $itemid,
+        ];
         return new external_function_parameters($params);
     }
 
@@ -166,15 +182,17 @@ class external extends external_api {
      * @param int $noteid The note ID.
      * @param string $note A note.
      * @param string $subject A subject for the note.
+     * @param int $itemid Item id coming from draft editor (form hidden element).
      * @return bool
      */
-    public static function update_note($noteid, $note, $subject) {
+    public static function update_note($noteid, $note, $subject, $itemid = 0) {
         global $USER, $PAGE;
-        $params = self::validate_parameters(self::update_note_parameters(), array(
+        $params = self::validate_parameters(self::update_note_parameters(), [
             'noteid' => $noteid,
             'note' => $note,
-            'subject' => $subject
-        ));
+            'subject' => $subject,
+            'itemid' => $itemid,
+        ]);
         $note = $params['note'];
         parse_str($params['note'], $data);
         if (is_array($data) && isset($data['note'])) {
@@ -183,7 +201,9 @@ class external extends external_api {
         return api::update_note(
             $params['noteid'],
             $note,
-            $params['subject']);
+            $params['subject'],
+            $params['itemid'],
+        );
     }
 
     /**
@@ -326,11 +346,15 @@ class external extends external_api {
             'noteid' => $noteid
         ));
         $context = \context_system::instance();
+
         self::validate_context($context);
         $output = $PAGE->get_renderer('core');
         $note = api::read_note($params['noteid']);
-        $exporter = new \local_notebook\external\notebook_exporter($note, array('context' => context_system::instance()));
+        $exporter = new \local_notebook\external\notebook_exporter($note, ['context' => context_system::instance()]);
         $record = $exporter->export($output);
+        $record->summary = file_rewrite_pluginfile_urls($record->summary, 'pluginfile.php', $context->id, 'local_notebook',
+            'summary', $record->itemid);
+
         return $record;
     }
 

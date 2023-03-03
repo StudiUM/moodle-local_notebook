@@ -25,6 +25,8 @@
 
 namespace local_notebook;
 
+use context_course;
+use context_system;
 use context_user;
 use \local_notebook\local_notebook_posts;
 
@@ -49,12 +51,18 @@ class helper {
             return;
         }
         list($relateduserid, $courseid, $coursemoduleid) = self::get_list_info_from_page();
+        if ($courseid) {
+            $context = context_course::instance($courseid);
+        } else {
+            $context = context_system::instance();
+        }
         $subject = self::prepare_subject($relateduserid, $courseid, $coursemoduleid);
         $data = new \Stdclass;
         $data->subject = $subject;
         $data->subjectorigin = $subject;
         $data->noteid = 0;
-        $form = new \local_notebook\form\note(null, ['index' => false]);
+        $form = new \local_notebook\form\note(null,
+            ['index' => false, 'context' => $context]);
         $form->set_data($data);
         ob_start();
         $form->display();
@@ -91,7 +99,12 @@ class helper {
         }
         $data = new \Stdclass;
         $data->noteid = 0;
-        $form = new \local_notebook\form\note(null, ['index' => true]);
+        if ($courseid) {
+            $context = context_course::instance($courseid);
+        } else {
+            $context = context_system::instance();
+        }
+        $form = new \local_notebook\form\note(null, ['index' => true, 'context' => $context]);
         $form->set_data($data);
         ob_start();
         $form->display();

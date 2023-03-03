@@ -314,11 +314,11 @@
     -moz-osx-font-smoothing: grayscale;
 }
 .notebookcontainer #fitem_id_subject .col-md-3.col-form-label,
-.notebookcontainer #fitem_id_note .col-md-3.col-form-label {
+.notebookcontainer #fitem_id_summary_editor .col-md-3.col-form-label {
     display: none !important;
 }
 .notebookcontainer #fitem_id_subject .col-md-9.form-inline,
-.notebookcontainer #fitem_id_note .col-md-9.form-inline {
+.notebookcontainer #fitem_id_summary_editor .col-md-9.form-inline {
     flex: 0 0 100%;
     max-width: 100%;
     padding-right: 5px;
@@ -368,17 +368,17 @@
 [data-region=right-hand-notebook-drawer] #add-note-form-container form {
     height: 90%;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_note,
-[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor],
-[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] > div,
-[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap,
-[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .editor_atto {
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor,
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor],
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] > div,
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap,
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap .editor_atto {
     height: 100%;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_note .editor_atto_content_wrap {
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor .editor_atto_content_wrap {
     height: 85%;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_note #id_noteeditable {
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor #id_summary_editoreditable {
     min-height: auto !important;
     height: 85% !important;
     position: absolute;
@@ -388,11 +388,11 @@
 [data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-container {
     height: 100% !important;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .editor_atto_notification{
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap .editor_atto_notification{
     position: absolute;
     bottom: 0;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_note [data-fieldtype=editor] .editor_atto_wrap .atto_info {
+[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap .atto_info {
     font-size: 13px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;

@@ -44,6 +44,17 @@ class note extends moodleform  implements renderable {
      */
     public function definition() {
         $mform = $this->_form;
+
+        $context = $this->_customdata['context'];
+        $definitionoptions = [
+            'maxfiles' => EDITOR_UNLIMITED_FILES,
+            'trusttext' => true,
+            'subdirs' => true,
+            'noclean' => false,
+            'autosave' => false,
+            'context' => $context
+        ];
+
         $mform->setAttributes(['id' => 'noteform'] + $mform->getAttributes());
         $mform->addElement('hidden', 'subjectorigin');
         $mform->setType('subjectorigin', PARAM_TEXT);
@@ -70,9 +81,9 @@ class note extends moodleform  implements renderable {
             'aria-label' => get_string('notesubject', 'local_notebook')]);
         $mform->setType('subject', PARAM_TEXT);
 
-        $mform->addElement('editor', 'note', '', ['data-required' => 'true',
-            'aria-label' => get_string('notecontent', 'local_notebook')]);
-        $mform->setType('note', PARAM_CLEANHTML);
+        $mform->addElement('editor', 'summary_editor', '', ['data-required' => 'true',
+            'aria-label' => get_string('notecontent', 'local_notebook')], $definitionoptions);
+        $mform->setType('summary_editor', PARAM_CLEANHTML);
 
         // Accessiblity for required fields.
         $mform->addElement('html', \html_writer::span(get_string('formrequiredfields', 'local_notebook'), 'sr-only'));

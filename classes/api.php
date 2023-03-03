@@ -32,6 +32,10 @@ use context_system;
 use core_course_category;
 use \local_notebook\local_notebook_posts;
 
+defined('MOODLE_INTERNAL') || die();
+
+require_once($CFG->libdir . '/filelib.php');
+
 /**
  * Class for notebook api.
  *
@@ -50,15 +54,29 @@ class api {
      * @param int $userid The user ID.
      * @param int $courseid The course ID.
      * @param int $coursemoduleid The course module ID.
+     * @param int $itemid Item id coming from draft editor (form hidden element).
      * @return int the note id.
      */
-    public static function add_note($note, $subject, $userid, $courseid, $coursemoduleid) {
+    public static function add_note($note, $subject, $userid, $courseid, $coursemoduleid, $itemid = 0) {
         global $USER, $DB;
         self::can_use_notebook();
+        if ($courseid) {
+            $context = context_course::instance($courseid);
+        } else {
+            $context = context_system::instance();
+        }
+        // EDITOR_UNLIMITED_FILES is defined as -1, for some reason external passes constant as string in array below.
+        $definitionoptions = [
+            'maxfiles' => -1,
+            'trusttext' => true,
+            'subdirs' => true,
+            'noclean' => false,
+            'context' => $context
+        ];
         // Init note persistence.
         $notebook = new local_notebook_posts();
         if ($courseid) {
-            $course = $DB->get_record('course', array('id' => $courseid), '*', MUST_EXIST);
+            $course = $DB->get_record('course', ['id' => $courseid], '*', MUST_EXIST);
             if (!core_course_category::can_view_course_info($course)) {
                 throw new \moodle_exception('usercannotaccesscourse', 'local_notebook');
             }
@@ -67,9 +85,8 @@ class api {
         }
 
         if ($userid) {
-            $user = $DB->get_record('user', array('id' => $userid), '*', MUST_EXIST);
+            $user = $DB->get_record('user', ['id' => $userid], '*', MUST_EXIST);
             if ($courseid) {
-                $context = context_course::instance($course->id, MUST_EXIST);
                 if (!is_enrolled($context, $user, '', true)) {
                     throw new \moodle_exception('usernotenrolledincourse', 'local_notebook');
                 }
@@ -101,25 +118,30 @@ class api {
         if (trim($subject) == '') {
             throw new \moodle_exception('subjectcannotbeempty', 'local_notebook');
         }
+        $note = (object) [
+            'summary_editor' => [
+                'text' => $note,
+                'format' => FORMAT_HTML,
+                'itemid' => $itemid,
+            ],
+        ];
+        $note = file_postupdate_standard_editor($note, 'summary', $definitionoptions, $context, 'local_notebook', 'summary',
+            $itemid);
         $notebook->set('subject', $subject);
-        $notebook->set('summary', $note);
+        $notebook->set('summary', $note->summary);
+        $notebook->set('summaryformat', $note->summaryformat);
+        $notebook->set('itemid', $itemid);
         $success = $notebook->create();
         if ($success) {
-            // Trigger event.
-            if ($notebook->get('courseid')) {
-                $context = context_course::instance($notebook->get('courseid'));
-            } else {
-                $context = context_system::instance();
-            }
-            $event = \local_notebook\event\notebook_created::create(array(
+            $event = \local_notebook\event\notebook_created::create([
                 'objectid' => $notebook->get('id'),
                 // Set to null, so teacher can not access to the student note.
                 'courseid' => null,
                 'relateduserid' => $notebook->get('userid'),
                 'userid' => $notebook->get('usermodified'),
                 'context' => $context,
-                'other' => array('courseid' => $notebook->get('courseid'), 'cmid' => $notebook->get('coursemoduleid'))
-            ));
+                'other' => ['courseid' => $notebook->get('courseid'), 'cmid' => $notebook->get('coursemoduleid')],
+            ]);
             $event->trigger();
         }
         return $notebook->get('id');
@@ -221,13 +243,28 @@ class api {
      * @param int $noteid The note ID.
      * @param string $note A note.
      * @param string $subject A subject for the note.
+     * @param int $itemid Item id coming from draft editor (form hidden element).
      * @return boolean
      */
-    public static function update_note($noteid, $note, $subject) {
+    public static function update_note($noteid, $note, $subject, $itemid = 0) {
         global $USER, $DB;
         self::can_use_notebook();
+        // EDITOR_UNLIMITED_FILES is defined as -1, for some reason external passes constant as string in array below.
+
         // Init note persistence.
         $notebook = new local_notebook_posts($noteid);
+        if ($notebook->get('courseid')) {
+            $context = context_course::instance($notebook->get('courseid'));
+        } else {
+            $context = context_system::instance();
+        }
+        $definitionoptions = [
+            'maxfiles' => -1,
+            'trusttext' => true,
+            'subdirs' => true,
+            'noclean' => false,
+            'context' => $context
+        ];
         if (!$notebook->get('id')) {
             throw new \moodle_exception('notenotfound', 'local_notebook');
         }
@@ -243,17 +280,24 @@ class api {
         if (trim($subject) == '') {
             throw new \moodle_exception('subjectcannotbeempty', 'local_notebook');
         }
+
+        $note = (object) [
+            'summary_editor' => [
+                'text' => $note,
+                'format' => FORMAT_HTML,
+                'itemid' => $itemid,
+            ],
+        ];
+        $note = file_postupdate_standard_editor($note, 'summary', $definitionoptions, $context, 'local_notebook', 'summary',
+            $itemid);
         $notebook->set('subject', $subject);
-        $notebook->set('summary', $note);
+        $notebook->set('summary', $note->summary);
+        $notebook->set('summaryformat', $note->summaryformat);
+        $notebook->set('itemid', $itemid);
         $success = $notebook->update();
         if ($success) {
             // Trigger event.
-            if ($notebook->get('courseid')) {
-                $context = context_course::instance($notebook->get('courseid'));
-            } else {
-                $context = context_system::instance();
-            }
-            $event = \local_notebook\event\notebook_updated::create(array(
+            $event = \local_notebook\event\notebook_updated::create([
                 'objectid' => $notebook->get('id'),
                 // Set to null, so teacher can not access to the student note.
                 'courseid' => null,
@@ -261,7 +305,7 @@ class api {
                 'userid' => $notebook->get('usermodified'),
                 'context' => $context,
                 'other' => array('courseid' => $notebook->get('courseid'), 'cmid' => $notebook->get('coursemoduleid'))
-            ));
+            ]);
             $event->trigger();
         }
         return $success;

@@ -88,6 +88,10 @@ class local_notebook_posts extends persistent {
                 'type' => PARAM_INT,
                 'null' => NULL_NOT_ALLOWED
             ],
+            'itemid' => [
+                'type' => PARAM_INT,
+                'null' => NULL_ALLOWED
+            ]
         ];
     }
 

@@ -545,7 +545,7 @@ define(
                 args: {noteid: noteid},
                 done: function(result) {
                     if (result) {
-                        $(SELECTORS.FORM_CONTAINER + " #id_noteeditable").html(result.summary);
+                        $(SELECTORS.FORM_CONTAINER + " #id_summary_editoreditable").html(result.summary);
                         $(SELECTORS.NOTE_FORM + ' textarea').val($(SELECTORS.NOTE_VIEW + ' .textareaorigin').val());
                         $(SELECTORS.NOTE_FORM + ' textarea').trigger('change');
                         $(SELECTORS.NOTE_FORM +' input[name="subject"]').val(result.subject);
@@ -595,9 +595,9 @@ define(
          *
          */
         var toggleSaveButton = () => {
-            let editorcontent = $(SELECTORS.FORM_CONTAINER + " #id_noteeditable").html();
+            let editorcontent = $(SELECTORS.FORM_CONTAINER + " #id_summary_editoreditable").html();
             let emptyeditor = false;
-            let noteid = $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val();
+            let noteid = $(SELECTORS.NOTE_FORM + ' input[name="noteid"]').val();
             let samecontent = false;
             if (noteid !== '0') {
                 let subjectform = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val();

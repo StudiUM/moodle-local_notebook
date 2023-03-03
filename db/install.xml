@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<XMLDB PATH="local/notebook/db" VERSION="20230224" COMMENT="XMLDB file for Moodle local/notebook"
+<XMLDB PATH="local/notebook/db" VERSION="20230306" COMMENT="XMLDB file for Moodle local/notebook"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:noNamespaceSchemaLocation="../../../lib/xmldb/xmldb.xsd"
 >
@@ -19,6 +19,7 @@
         <FIELD NAME="summaryformat" TYPE="int" LENGTH="2" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="format" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
         <FIELD NAME="usermodified" TYPE="int" LENGTH="10" NOTNULL="false" SEQUENCE="false"/>
+        <FIELD NAME="itemid" TYPE="int" LENGTH="20" NOTNULL="false" SEQUENCE="false" COMMENT="Editor draft id provided user needs file serving with proper url ie: using a screenshot"/>
       </FIELDS>
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

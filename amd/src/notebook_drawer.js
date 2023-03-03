@@ -84,6 +84,8 @@ define(
             NOTE_TABLE_CONTAINER: '[data-region="body-container"] #notebook-table-container',
             NOTE_TABLE_ROW: '[data-region="body-container"] #notebook-table tr',
             NOTE_FORM: '[data-region="body-container"] #noteform',
+            NOTE_SUMMARY: '#id_summary_editor',
+            NOTE_ITEMID: '[name="summary_editor[itemid]"]',
             HEADER_NOTE_DELETE: '[data-region="header-container"] .deletenote',
             HEADER_NOTE_EDIT: '[data-region="header-container"] .editnote',
             FOOTER_NOTE_TAGS: '[data-region="footer-container"] .notetags',
@@ -545,7 +547,8 @@ define(
                     args.coursemoduleid = this.coursemoduleid;
                 }
                 args.subject = $(SELECTORS.NOTE_FORM +' input[name="subject"]').val();
-                args.note = $(SELECTORS.NOTE_FORM).serialize();
+                args.note = $(SELECTORS.NOTE_SUMMARY).val();
+                args.itemid = $(SELECTORS.NOTE_ITEMID).val();
                 ajax.call([{
                     methodname: service,
                     args: args,
@@ -557,6 +560,7 @@ define(
                                 delete args.subject;
                                 delete args.note;
                                 delete args.noteid;
+                                delete args.itemid;
                                 ajax.call([{
                                     methodname: 'local_notebook_get_form_subject',
                                     args: args,
@@ -646,7 +650,7 @@ define(
         var resetNoteForm = () => {
             $(SELECTORS.NOTE_FORM +' input[name="subject"]').val($(SELECTORS.NOTE_FORM +' input[name="subjectorigin"]').val());
             $(SELECTORS.NOTE_FORM + ' textarea').val('');
-            $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html('');
+            $(SELECTORS.BODY_CONTAINER+ " #id_summary_editoreditable").html('');
             $(SELECTORS.NOTE_FORM + ' textarea').trigger('change');
             $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val(0);
             // Remove message success if exist.
@@ -720,11 +724,11 @@ define(
                 done: function(result) {
                     if (result) {
                         $(SELECTORS.DRAWER).removeClass('view').addClass('edit');
-                        $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html(result.summary);
+                        $(SELECTORS.BODY_CONTAINER+ " #id_summary_editoreditable").html(result.summary);
                         $(SELECTORS.NOTE_FORM + ' textarea').val($(SELECTORS.NOTE_VIEW + ' .textareaorigin').val());
                         $(SELECTORS.NOTE_FORM + ' textarea').trigger('change');
-                        $(SELECTORS.NOTE_FORM +' input[name="subject"]').val(result.subject);
-                        $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val(noteid);
+                        $(SELECTORS.NOTE_FORM + ' input[name="subject"]').val(result.subject);
+                        $(SELECTORS.NOTE_FORM + ' input[name="noteid"]').val(noteid);
                         hideNoteView(SELECTORS.NOTE_FORM +' input[name="subject"]');
                         toggleSaveButton();
                         toggleNoteForm('show');
@@ -772,9 +776,9 @@ define(
          *
          */
         var toggleSaveButton = () => {
-            let editorcontent = $(SELECTORS.BODY_CONTAINER+ " #id_noteeditable").html();
+            let editorcontent = $(SELECTORS.BODY_CONTAINER + " #id_summary_editoreditable").html();
             let emptyeditor = false;
-            let noteid = $(SELECTORS.NOTE_FORM +' input[name="noteid"]').val();
+            let noteid = $(SELECTORS.NOTE_FORM + ' input[name="noteid"]').val();
             let samecontent = false;
             if (noteid !== '0') {
                 let subjectform = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val();

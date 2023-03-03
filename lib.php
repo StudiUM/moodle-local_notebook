@@ -24,6 +24,7 @@
  */
 
 use tool_usertours\helper;
+use local_notebook\api;
 
 /**
  * The standard HTML that should be output just before the <footer> tag.
@@ -59,7 +60,7 @@ function local_notebook_before_standard_top_of_body_html() {
  */
 function local_notebook_extend_navigation(global_navigation $nav) {
     global $USER, $PAGE;
-    if(!isloggedin()) {
+    if (!isloggedin()) {
         return;
     }
     $courseid = 0;
@@ -195,4 +196,36 @@ function local_notebook_get_fontawesome_icon_map() {
     ];
 }
 
+/**
+ * Serves any files associated with the notebook.
+ *
+ * @param stdClass $course Course object
+ * @param stdClass $cm Course module object
+ * @param context $context Context
+ * @param string $filearea File area for data privacy
+ * @param array $args Arguments
+ * @param bool $forcedownload If we are forcing the download
+ * @param array $options More options
+ * @return bool Returns false if we don't find a file.
+ */
+function local_notebook_pluginfile($course, $cm, $context, $filearea, $args, $forcedownload, array $options = []) {
+    if ($context->contextlevel == CONTEXT_USER || $context->contextlevel == CONTEXT_SYSTEM
+        || $context->contextlevel == CONTEXT_COURSE) {
+        // Make sure the user is logged in.
+        api::can_use_notebook();
+        // Get the item id. This should be the first element of the $args array.
+        $itemid = $args[0];
 
+        // All good. Serve the exported data.
+        $fs = get_file_storage();
+        $relativepath = implode('/', $args);
+        $fullpath = "/$context->id/local_notebook/$filearea/$relativepath";
+        $file = $fs->get_file_by_hash(sha1($fullpath));
+        if (!$file || $file->is_directory()) {
+            return false;
+        }
+        send_stored_file($file, 0, 0, $forcedownload, $options);
+    } else {
+        send_file_not_found();
+    }
+}

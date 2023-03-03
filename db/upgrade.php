@@ -30,11 +30,10 @@
  * @return bool result
  */
 function xmldb_local_notebook_upgrade($oldversion) {
+    global $DB;
+    $dbman = $DB->get_manager();
+
     if ($oldversion < 2022091401) {
-        global $DB;
-
-        $dbman = $DB->get_manager();
-
         // Define table local_notebook_posts to be created.
         $table = new xmldb_table('local_notebook_posts');
 
@@ -63,5 +62,16 @@ function xmldb_local_notebook_upgrade($oldversion) {
 
         // Notebook savepoint reached.
         upgrade_plugin_savepoint(true, 2022091401, 'local', 'notebook');
+    }
+
+    if ($oldversion < 2023030600) {
+        $table = new xmldb_table('local_notebook_posts');
+        $field = new xmldb_field('itemid', XMLDB_TYPE_INTEGER, '20', null, null, null, null);
+        // Conditionally launch add field itemid.
+        if (!$dbman->field_exists($table, $field)) {
+            $dbman->add_field($table, $field);
+        }
+        // Notebook savepoint reached.
+        upgrade_plugin_savepoint(true, 2023030600, 'local', 'notebook');
     }
 }

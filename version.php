@@ -25,7 +25,7 @@
 
 defined('MOODLE_INTERNAL') || die();
 
-$plugin->version = 2022091401;
+$plugin->version = 2023030600;
 $plugin->requires = 2019111803; /*TODO changer pour 3.10 quand on aura migré : 2020110900*/
 $plugin->maturity = MATURITY_ALPHA;
 $plugin->release = '0.0.1 (Build 2021051100)';
