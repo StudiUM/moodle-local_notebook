@@ -28,8 +28,10 @@ namespace local_notebook;
 use context_course;
 use context_system;
 use context_user;
+use \core\notification;
 use \local_notebook\local_notebook_posts;
 use moodle_url;
+use \local_notebook\plugininfo\notebook;
 
 /**
  * Notebook helper class.
@@ -96,6 +98,7 @@ class helper {
     public static function render_notebook_index($courseid, $coursemoduleid, $relateduserid) {
         global $PAGE;
         if (!self::has_to_display_notebook()) {
+            notification::warning(get_string('noaccess', 'local_notebook'));
             return;
         }
         $data = new \Stdclass;
@@ -209,7 +212,11 @@ class helper {
      */
     public static function has_to_display_notebook() {
         global $PAGE;
-
+        $notebookinfo = new notebook();
+        $enabled = $notebookinfo->is_enabled();
+        if (!$enabled) {
+            return false;
+        }
         if (in_array($PAGE->pagelayout,
             ['maintenance',
             'print',

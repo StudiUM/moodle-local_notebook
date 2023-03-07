@@ -15,18 +15,26 @@
 // along with Moodle.  If not, see <http://www.gnu.org/licenses/>.
 
 /**
- * Notebook local plugin version information.
+ * Notebook settings.
  *
  * @package    local_notebook
- * @copyright  2021 Université de Montréal
- * @author     Mélissa De Cristofaro <melissa.de.cristofaro@umontreal.ca>
+ * @copyright  Catalyst IT Canada 2023
+ * @author     Ghaly Marc-Alexandre <marc-alexandreghaly@catalyst-ca.net>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+namespace local_notebook\plugininfo;
 
-defined('MOODLE_INTERNAL') || die();
+use core\plugininfo\local;
 
-$plugin->version = 2023030800;
-$plugin->requires = 2019111803; /*TODO changer pour 3.10 quand on aura migré : 2020110900*/
-$plugin->maturity = MATURITY_ALPHA;
-$plugin->release = '0.0.1 (Build 2021051100)';
-$plugin->component = 'local_notebook';
+/**
+ * Plugin info class for logging store plugins.
+ */
+class notebook extends local {
+    /**
+     * Returns whether notebook is enabled or not.
+     */
+    public function is_enabled() {
+        $enabled = (int) get_config('local_notebook', 'enabled') === 1 ? false : true;
+        return $enabled;
+    }
+}

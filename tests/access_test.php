@@ -29,6 +29,7 @@ global $CFG;
 
 use local_notebook\api;
 use local_notebook\helper;
+use moodle_exception;
 
 /**
  * Notebook access testcase.
@@ -41,40 +42,92 @@ use local_notebook\helper;
 class access_test extends \advanced_testcase {
 
     /**
-     * Test if user can use notebook in some pages.
+     * Tests if notebook can be disabled.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
      */
-    public function test_can_use_notebook() {
-        global $PAGE;
-        // Test user not logged in.
+    public function test_disable_notebook() {
+        $this->resetAfterTest(true);
+        $this->assertTrue(set_config('enabled', 1, 'local_notebook'));
+        $this->assert_cannot_access();
+    }
+
+    /**
+     * Tests if not logged in user can access notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_not_logged_in_can_use_notebook() {
+        $this->resetAfterTest(true);
         $this->setUser();
         $this->assert_cannot_access();
+    }
 
-        // Test guest user.
+    /**
+     * Tests if guest user can access notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_guest_user_can_use_notebook() {
+        $this->resetAfterTest(true);
         $this->setGuestUser();
         $this->assert_cannot_access();
+    }
 
+    /**
+     * Test if on secure page can access notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_secure_page_can_use_notebook() {
+        $this->resetAfterTest(true);
+        global $PAGE;
         // Test with secure page.
         $PAGE->set_pagelayout('secure');
         $this->assert_cannot_access();
+    }
 
+    /**
+     * Test if maintenance page can access notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_maintenance_page_can_use_notebook() {
+        $this->resetAfterTest(true);
+        global $PAGE;
         // Set admin user.
         $this->setAdminUser();
 
         // Test with maintenance page.
         $PAGE->set_pagelayout('maintenance');
         $this->assert_cannot_access();
+    }
+
+    /**
+     * Test if standard page can access notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_standard_page_can_use_notebook() {
+        $this->resetAfterTest(true);
+        global $PAGE;
+        // Set admin user.
+        $this->setAdminUser();
 
         // Test with standard.
         $PAGE->set_pagelayout('standard');
         $this->assertTrue(helper::has_to_display_notebook());
     }
+
     /**
      * Assert can not access to the notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
      */
     protected function assert_cannot_access() {
-        $this->assertFalse(helper::has_to_display_notebook());
-        $this->expectException('moodle_exception');
+        $this->expectException(moodle_exception::class);
         $this->expectExceptionMessage("You cannot use the notebook on this page.");
         api::can_use_notebook();
+        $this->assertFalse(helper::has_to_display_notebook());
     }
 }

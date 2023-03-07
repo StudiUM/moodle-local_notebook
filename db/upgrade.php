@@ -74,4 +74,9 @@ function xmldb_local_notebook_upgrade($oldversion) {
         // Notebook savepoint reached.
         upgrade_plugin_savepoint(true, 2023030600, 'local', 'notebook');
     }
+
+    if ($oldversion < 2023030800) {
+        // Notebook savepoint reached.
+        upgrade_plugin_savepoint(true, 2023030800, 'local', 'notebook');
+    }
 }
