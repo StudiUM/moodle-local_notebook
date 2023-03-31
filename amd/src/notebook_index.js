@@ -607,7 +607,8 @@ define(
                     samecontent = true;
                 }
             }
-            if (editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0 && !editorcontent.includes("<img")) {
+            if (editorcontent !== undefined && editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0
+                && !editorcontent.includes("<img")) {
                 emptyeditor = true;
             }
             if ($(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '' || emptyeditor || samecontent) {
