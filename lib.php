@@ -91,21 +91,6 @@ function local_notebook_extend_navigation(global_navigation $nav) {
         if ($relateduserid !== 0) {
             $url->param('userid', $relateduserid);
         }
-        if (!isguestuser()) {
-            $childnode = navigation_node::create(
-                $title,
-                $url,
-                navigation_node::TYPE_CUSTOM,
-                'notebook',
-                'notebook',
-                $pix
-            );
-            $noderoot = $nav->find('site', navigation_node::TYPE_ROOTNODE);
-            $node = $noderoot->add_node($childnode, 'privatefiles');
-            $node->nodetype = navigation_node::NODETYPE_LEAF;
-            $node->showinflatnavigation = true;
-            $node->add_class('notebook');
-        }
     } else {
         $context = context_course::instance($PAGE->course->id);
 
