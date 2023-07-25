@@ -22,13 +22,15 @@
  * @copyright  2022 Université de Montréal
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
+
 namespace local_notebook\form;
 
 defined('MOODLE_INTERNAL') || die();
 
 use moodleform;
 use renderable;
-require_once($CFG->libdir.'/formslib.php');
+
+require_once($CFG->libdir . '/formslib.php');
 
 /**
  * Note form.
@@ -47,9 +49,9 @@ class note extends moodleform  implements renderable {
 
         $context = $this->_customdata['context'];
         $definitionoptions = [
-            'maxfiles' => EDITOR_UNLIMITED_FILES,
-            'trusttext' => true,
-            'subdirs' => true,
+            'maxfiles' => 0,
+            'return_types' => 0,
+            'subdirs' => 0,
             'noclean' => false,
             'autosave' => false,
             'context' => $context
@@ -63,26 +65,54 @@ class note extends moodleform  implements renderable {
 
         $buttonarray = [];
 
-        $buttonarray[] = $mform->createElement('cancel', '', get_string('cancel'),
-                ['data-action' => 'cancel',
+        $buttonarray[] = $mform->createElement(
+            'cancel',
+            '',
+            get_string('cancel'),
+            [
+                'data-action' => 'cancel',
                 'aria-label' => get_string('cancel'),
-                'id' => 'cancel-add-edit']);
+                'id' => 'cancel-add-edit'
+            ]
+        );
 
-        $buttonarray[] = $mform->createElement('submit', '', get_string('save'),
-            ['data-action' => 'save',
-            'id' => 'savenote',
-            'aria-label' => get_string('notesave', 'local_notebook')]);
+        $buttonarray[] = $mform->createElement(
+            'submit',
+            '',
+            get_string('save'),
+            [
+                'data-action' => 'save',
+                'id' => 'savenote',
+                'aria-label' => get_string('notesave', 'local_notebook')
+            ]
+        );
 
         $mform->addElement('html', \html_writer::start_div('', ['data-region' => 'footer']));
         $mform->addGroup($buttonarray, 'buttonar', '', ' ', false);
         $mform->addElement('html', \html_writer::end_div());
 
-        $mform->addElement('text', 'subject', '', ['data-required' => 'true', 'maxlength' => 100,
-            'aria-label' => get_string('notesubject', 'local_notebook')]);
+        $mform->addElement(
+            'text',
+            'subject',
+            '',
+            [
+                'data-required' => 'true', 'maxlength' => 100,
+                'aria-label' => get_string('notesubject', 'local_notebook')
+            ]
+        );
         $mform->setType('subject', PARAM_TEXT);
 
-        $mform->addElement('editor', 'summary_editor', '', ['data-required' => 'true',
-            'aria-label' => get_string('notecontent', 'local_notebook')], $definitionoptions);
+        $mform->addElement(
+            'editor',
+            'notebook_editor',
+            '',
+            [
+                'data-required' => 'true',
+                'aria-label' => get_string('notecontent', 'local_notebook'),
+                'rows' => 22,
+            ],
+            $definitionoptions
+        );
         $mform->setType('summary_editor', PARAM_CLEANHTML);
 
         // Accessiblity for required fields.

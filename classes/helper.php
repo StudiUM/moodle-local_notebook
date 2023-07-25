@@ -203,7 +203,11 @@ class helper {
             return '';
         } else {
             $renderer = $PAGE->get_renderer('core');
-            return $renderer->render_from_template('local_notebook/notebookbutton', []);
+            return $renderer->render_from_template(
+                'local_notebook/notebookbutton',
+                //Inform the view about the state of the right drawer
+                ["rightdraweropened" => self::is_right_drawer_opened()]
+            );
         }
     }
 
@@ -256,8 +260,21 @@ class helper {
             $params['userid'] = 0;
             $params['coursemoduleid'] = 0;
             $params['courseid'] = 0;
-
         }
         return local_notebook_posts::count_records($params);
+    }
+
+    /**
+     * Check if the right drawer exists and if it is opened
+     * I took as example the conditions of the drawers page (theme/boost/layout/drawers.php)
+     *
+     * @return boolean
+     */
+    private static function is_right_drawer_opened(): bool {
+        global $OUTPUT;
+        $addblockbutton = $OUTPUT->addblockbutton();
+        $blockshtml = $OUTPUT->blocks('side-pre');
+        $hasblocks = (strpos($blockshtml, 'data-block=') !== false || !empty($addblockbutton));
+        return isloggedin() && (get_user_preferences('drawer-open-block') == true) && $hasblocks;
     }
 }

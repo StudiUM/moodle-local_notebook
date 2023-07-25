@@ -27,7 +27,7 @@ Feature: Notebook instance tag display
     And I am on the "Test forum name" "forum activity" page logged in as teacher1
     And I click on "Open my notebook" "button"
     And I click on "Add note" "button"
-    And I click on "id_summary_editoreditable" "region"
+    And I click on "id_notebook_editoreditable" "region"
     And I type "Bonjour"
     And I click on "savenote" "button"
     # Getting out of course so no confusion with links.

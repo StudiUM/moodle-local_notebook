@@ -1,12 +1,16 @@
 .notebookbutton {
-	color:fff;
-    text-align:center;
-    color: fff;
+    color: var(--white, #fff);
     text-align: center;
     position: fixed;
     right: 30px;
     top: 50%;
     z-index: 6;
+    transition: 0.2s;
+}
+@media (min-width: 992px) {
+    .notebookbutton.drawer-right-opened {
+        right: calc(315px + 2rem);
+    }
 }
 .pagelayout-popup .notebookbutton {
     display: none
@@ -19,33 +23,35 @@
     text-align: left;
     overflow: hidden;
     border-radius: 26px;
-    background: #fff;
+    background: var(--white, #fff);
     transition: all 0.3s ease-out;
     white-space: nowrap;
-    outline-offset: -2px;
-    outline: 2px solid #006bb6;
+    outline-offset: -1px;
+    outline: 2px solid var(--white, #fff);
     text-decoration: none;
 }
-.notebookbutton .rolling:hover,
+.notebookbutton .rolling:hover ,
 .notebookbutton .rolling:focus {
     width: 230px;
     display: flex;
     flex-direction: row;
     align-content: space-between;
     justify-content: space-between;
+    outline-color: var(--primary, #0057ac);
 }
 .notebookbutton .rolling .rolling_icon {
     z-index: 9;
     width: 40px;
-    background: #006bb6;
+    background: var(--primary, #0057ac);
     height: 40px;
     border-radius: 26px;
     box-sizing: border-box;
-    color: #ffffff;
+    color: var(--white, #fff);
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    border: 1px solid var(--white, #fff);
 }
 .notebookbutton .rolling i.fa {
     font-size: 20px;
@@ -53,7 +59,9 @@
 }
 .notebookbutton .rolling .rolling_text {
     width: 190px;
-    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 .notebookbutton .rolling span {
     display: block;
@@ -62,12 +70,12 @@
     line-height: 2;
 }
 [data-region=right-hand-notebook-drawer] {
-	display: flex;
-	flex-direction: column;
-	transition: right 0.2s ease-in-out
+    display: flex;
+    flex-direction: column;
+    transition: right 0.2s ease-in-out
 }
-[data-region=right-hand-notebook-drawer] .closewidget a:focus{
-    border: 1px solid #fff;
+[data-region=right-hand-notebook-drawer] .closewidget a:focus {
+    border: 1px solid var(--white, #fff);
     padding: 0px 4px 0px 4px;
     height: 25px;
 }
@@ -78,7 +86,7 @@
     display: flex;
     flex-direction: row-reverse;
 }
-[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .columns{
+[data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .columns {
     width: 10%;
 }
 [data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-toolbar .search {
@@ -95,25 +103,24 @@
 }
 [data-region=right-hand-notebook-drawer] #note-list-actions {
     padding: 13px;
-    background: #eff1f3;
 }
-[data-region=right-hand-notebook-drawer] #note-list-actions .selected-note-count{
-    min-width : 30px;
+[data-region=right-hand-notebook-drawer] #note-list-actions .selected-note-count {
+    min-width: 30px;
 }
-[data-region=right-hand-notebook-drawer] #note-list-actions .close{
+[data-region=right-hand-notebook-drawer] #note-list-actions .close {
     font-size: inherit;
 }
 [data-region=right-hand-notebook-drawer] #message-success-container {
     z-index: 4;
 }
-[data-region=right-hand-notebook-drawer] #message-success-container .alert{
+[data-region=right-hand-notebook-drawer] #message-success-container .alert {
     margin-bottom: 0;
     padding: 1.5rem;
 }
-[data-region=right-hand-notebook-drawer] form#noteform  input[name="subject"] {
+[data-region=right-hand-notebook-drawer] form#noteform input[name="subject"] {
     width: 100%;
 }
-[data-region=right-hand-notebook-drawer] form#noteform  #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
+[data-region=right-hand-notebook-drawer] form#noteform #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
     margin-left: auto !important;
 }
 .notebookcontainer [data-region=footer] #fgroup_id_buttonar .col-md-9.form-inline {
@@ -121,22 +128,21 @@
     max-width: 100%;
 }
 @media (prefers-reduced-motion:reduce) {
-	[data-region=right-hand-notebook-drawer] {
-		transition: none
-	}
+    [data-region=right-hand-notebook-drawer] {
+        transition: none
+    }
 }
- [data-region=right-hand-notebook-drawer].drawer {
-	z-index: 1020;
-	position: fixed;
-	top: 50px;
-	right: 0;
-	height: calc(100% - 50px);
-	width: 100%;
-	box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
-	padding: 0;
-	visibility: visible;
-	opacity: 1
-
+[data-region=right-hand-notebook-drawer].drawer {
+    z-index: 1020;
+    position: fixed;
+    top: 60px;
+    right: 0;
+    height: calc(100% - 60px);
+    width: 100%;
+    box-shadow: -2px 2px 4px rgba(0, 0, 0, .08);
+    padding: 0;
+    visibility: visible;
+    opacity: 1
 }
 @media (min-width: 768px) {
     [data-region=right-hand-notebook-drawer].drawer {
@@ -144,27 +150,27 @@
     }
 }
 [data-region=right-hand-notebook-drawer].hidden {
-	display: block;
-	right: -640px;
-	visibility: hidden;
-	opacity: 0;
-	transition: right 0.2s ease-in-out, visibility 0s ease-in-out 0.2s, opacity 0s ease-in-out 0.2s
+    display: block;
+    right: -640px;
+    visibility: hidden;
+    opacity: 0;
+    transition: right 0.2s ease-in-out, visibility 0s ease-in-out 0.2s, opacity 0s ease-in-out 0.2s
 }
 @media (prefers-reduced-motion:reduce) {
-	[data-region=right-hand-notebook-drawer].hidden {
-		transition: none
-	}
+    [data-region=right-hand-notebook-drawer].hidden {
+        transition: none
+    }
 }
 @media (max-width:767.98px) {
-	[data-region=right-hand-notebook-drawer].drawer {
-		top: 0;
-		height: 100%;
-		z-index: 1031;
-	}
-	body.drawer-open-left,
-	body.drawer-open-right {
-		overflow: hidden
-	}
+    [data-region=right-hand-notebook-drawer].drawer {
+        top: 0;
+        height: 100%;
+        z-index: 1031;
+    }    
+    body.drawer-open-left,
+    body.drawer-open-right {
+        overflow: hidden
+    }
 }
 @media (max-width:575.98px) {
     [data-region=right-hand-notebook-drawer] .fixed-table-pagination {
@@ -187,13 +193,13 @@
         width: 92%;
     }
     .notebookcontainer .bootstrap-table tbody tr td .card-views .item-content .card-view {
-        padding-left: 0.5rem!important;
+        padding-left: 0.5rem !important;
     }
     .notebookcontainer .bootstrap-table .fixed-table-container .table tbody tr .card-view .card-view-title {
         min-width: 15%;
     }
     .notebookcontainer .bootstrap-table tbody tr td .card-view:not(:first-child):not(:last-child) {
-        margin-left:25px;
+        margin-left: 25px;
     }
     .notebookcontainer div.editor_atto_toolbar button {
         padding: 2px 5px;
@@ -207,29 +213,29 @@
     }
 }
 .dir-rtl [data-region=right-hand-notebook-drawer] {
-	box-shadow: 2px 2px 4px rgba(0, 0, 0, .08)
+    box-shadow: 2px 2px 4px rgba(0, 0, 0, .08)
 }
 [data-region=right-hand-notebook-drawer] {
-	display: flex;
-	flex-direction: column;
-	transition: right 0.2s ease-in-out
+    display: flex;
+    flex-direction: column;
+    transition: right 0.2s ease-in-out
 }
 @media (prefers-reduced-motion:reduce) {
-	[data-region=right-hand-notebook-drawer] {
-		transition: none;
-	}
+    [data-region=right-hand-notebook-drawer] {
+        transition: none;
+    }
 }
 .notebookcontainer .bootstrap-table .fixed-table-container .fixed-table-body {
     overflow-x: hidden !important;
 }
 .notebookcontainer .fixed-table-body {
-	background-color: white;
+    background-color: white;
 }
 .notebookcontainer .bootstrap-table .fixed-table-container.fixed-height .fixed-table-border {
     height: auto !important;
 }
 .notebookcontainer thead {
-	background-color: #ced4da;
+    background-color: var(--secondary, #e5f0f8);
 }
 .notebookcontainer .message-app .body-container>* {
     position: relative;
@@ -240,13 +246,13 @@
     margin-top: 5px;
 }
 .notebookcontainer .fa-sync:before {
-    content:"\f021";
+    content: "\f021";
 }
 .notebookcontainer .fa-sync-alt:before {
-    content:"\f2f1";
+    content: "\f2f1";
 }
 [data-region=header-container] {
-	vertical-align: middle;
+    vertical-align: middle;
     text-align: center;
 }
 [data-region=body-container] div.truncate {
@@ -270,16 +276,14 @@
 .notebookcontainer .bootstrap-table .context-note.wcn-2 {
     max-width: 120px;
 }
-
 @media (max-width:575.98px) {
     .notebookcontainer .bootstrap-table span.subject {
-        width:80%;
+        width: 80%;
     }
     .notebookcontainer .bootstrap-table .context-note.wcn-2 {
         max-width: 100px;
     }
 }
-
 .notebookcontainer .bootstrap-table .fixed-table-container .table thead th .th-inner {
     padding: 0.25rem;
 }
@@ -304,7 +308,9 @@
 .bi-arrow-clockwise::before {
     content: "\f0e2";
 }
-.bi::before, [class^="bi-"]::before, [class*=" bi-"]::before {
+.bi::before,
+[class^="bi-"]::before,
+[class*=" bi-"]::before {
     display: inline-block;
     font: normal normal normal 14px/1 FontAwesome;
     text-transform: none;
@@ -314,11 +320,11 @@
     -moz-osx-font-smoothing: grayscale;
 }
 .notebookcontainer #fitem_id_subject .col-md-3.col-form-label,
-.notebookcontainer #fitem_id_summary_editor .col-md-3.col-form-label {
+.notebookcontainer #fitem_id_notebook_editor .col-md-3.col-form-label {
     display: none !important;
 }
 .notebookcontainer #fitem_id_subject .col-md-9.form-inline,
-.notebookcontainer #fitem_id_summary_editor .col-md-9.form-inline {
+.notebookcontainer #fitem_id_notebook_editor .col-md-9.form-inline {
     flex: 0 0 100%;
     max-width: 100%;
     padding-right: 5px;
@@ -352,6 +358,9 @@
     bottom: 4px;
     right: 8%;
 }
+.notebookcontainer #notebook-table-container .addnote .fa {
+    vertical-align: middle;
+}
 .notebookcontainer #notebook-table .viewnote:focus {
     box-shadow: 0 0 0 .2rem rgba(78, 82, 85, 0.5);
 }
@@ -368,8 +377,7 @@
 [data-region=right-hand-notebook-drawer] #add-note-form-container form {
     height: 90%;
 }
-
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor #id_summary_editoreditable {
+[data-region=right-hand-notebook-drawer] #fitem_id_notebook_editor #id_notebook_editoreditable {
     min-height: auto !important;
     position: absolute;
     resize: none;
@@ -378,43 +386,39 @@
 [data-region=right-hand-notebook-drawer] .bootstrap-table .fixed-table-container {
     height: 100% !important;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap .editor_atto_notification{
+[data-region=right-hand-notebook-drawer] #fitem_id_notebook_editor [data-fieldtype=editor] .editor_atto_wrap .editor_atto_notification {
     position: absolute;
     bottom: 0;
 }
-[data-region=right-hand-notebook-drawer] #fitem_id_summary_editor [data-fieldtype=editor] .editor_atto_wrap .atto_info {
+[data-region=right-hand-notebook-drawer] #fitem_id_notebook_editor [data-fieldtype=editor] .editor_atto_wrap .atto_info {
     font-size: 13px;
     border-bottom-right-radius: 0;
     border-bottom-left-radius: 0;
 }
-
 .message-app .editor_atto_wrap a {
-    color: #0f6cbf !important;
+    color: var(--blue, #0f6cbf) !important;
 }
 
 .summarynote a {
-    color: #0f6cbf !important;
+    color: var(--blue, #0f6cbf) !important;
 }
-
 @media screen and (max-width:480px) and (orientation: portrait) {
     .notebookcontainer #fgroup_id_buttonar .col-form-label .form-label-addon .alert {
         margin-top: 1rem;
     }
 }
-
 @media screen and (min-width:401px) and (max-width:480px) and (orientation: portrait) {
     [data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon .alert {
         margin-top: 1rem;
     }
 }
-
 .notebookcontainer #notebook-table-container {
     height: 87% !important;
 }
 .notebookcontainer #add-note-form-container form {
     margin-top: 5px;
-    padding-left: 5px;
-    margin-right: 5px;
+    padding-left: 15px;
+    margin-right: 15px;
 }
 .notebookcontainer [data-region=footer] .col-md-9.form-inline .d-flex.flex-wrap.align-items-center {
     justify-content: flex-start;
@@ -427,7 +431,6 @@
 [data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon {
     margin-left: 0.2rem;
 }
-
 [data-region="body-container"] #fgroup_id_buttonar .col-form-label .form-label-addon .alert {
     padding: .5rem 1.25rem;
     margin-bottom: 0.25rem;
@@ -445,7 +448,7 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
-.notebookcontainer [data-region="view-note"] #note-dates td{
+.notebookcontainer [data-region="view-note"] #note-dates td {
     font-size: 14px;
 }
 .notebookcontainer .blur-content {
@@ -460,44 +463,49 @@
 }
 .notebookcontainer [data-region="confirm-dialogue-container"] {
     top: 0;
-    background: rgba(0,0,0,0.3);
+    background: rgba(0, 0, 0, 0.3);
 }
 .notebookcontainer [data-region="notebook-index"] .container-fluid {
     padding-right: 0;
+    padding-left: 0;
 }
 .notebookcontainer [data-region="notebook-index"] .view-note {
-    background-color: #fff;
+    background-color: var(--white, #fff);
 }
 .notebookcontainer .notebook-index [data-region="confirm-dialogue"] {
     margin: auto;
     margin-top: 3rem;
 }
-@media (max-width: 1199.98px) and (min-width: 576px){
+@media (max-width: 1199.98px) and (min-width: 576px) {
     .notebookcontainer .notebook-index [data-region="confirm-dialogue"] {
         width: 50%;
     }
 }
-@media (min-width: 1200px){
+@media (min-width: 1200px) {
     .notebookcontainer .notebook-index [data-region="confirm-dialogue"] {
         width: 25%;
     }
 }
-[data-region="notebook-index"] form#noteform  input[name="subject"] {
+[data-region="notebook-index"] form#noteform input[name="subject"] {
     width: 100%;
 }
 [data-region="notebook-index"] form#noteform .form-inline {
     display: block;
 }
+[data-region="notebook-index"] form#noteform .row {
+    margin-left: 0px;
+    margin-right: 0px;
+}
 [data-region="notebook-index"] .summarynote {
     word-break: break-word;
 }
 .notebookcontainer [data-region="notebook-index"].message-app {
-    background-color: #fff;
+    background-color: var(--white, #fff);
 }
 .notebookcontainer [data-region="notebook-index"] .backtolist {
     visibility: hidden;
 }
-.notebookcontainer [data-region="notebook-index"] form#noteform  #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
+.notebookcontainer [data-region="notebook-index"] form#noteform #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
     margin-left: auto !important;
 }
 .notebookcontainer .bootstrap-table .fixed-table-container .table {
