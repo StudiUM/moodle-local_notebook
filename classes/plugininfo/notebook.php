@@ -37,4 +37,12 @@ class notebook extends local {
         $enabled = (int) get_config('local_notebook', 'enabled') === 1 ? false : true;
         return $enabled;
     }
+
+    /**
+     * Returns whether notebook is enabled or not on all quiz instances.
+     * @return bool true if enabled, false if not
+     */
+    public function is_enabled_quiz_attempt() {
+        return ((int) get_config('local_notebook', 'enabledquizattempt')) === 1 ? false : true;
+    }
 }

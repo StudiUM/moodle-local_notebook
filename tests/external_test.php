@@ -95,6 +95,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test add note external function with empty note.
+     *
+     * @covers \local_notebook\external::add_note
      */
     public function test_add_note_with_empty_note() {
         $this->setUser($this->student);
@@ -105,6 +107,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test add note external function with empty subject.
+     *
+     * @covers \local_notebook\external::add_note
      */
     public function test_add_note_with_empty_subject() {
         $this->setUser($this->student);
@@ -115,6 +119,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test add note external function with user not belonging to course.
+     *
+     * @covers \local_notebook\external::add_note
      */
     public function test_add_note_with_user_not_belong_to_course() {
         $this->setUser($this->student);
@@ -125,6 +131,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test add note external function with course module not belonging to course.
+     *
+     * @covers \local_notebook\external::add_note
      */
     public function test_add_note_with_cm_not_belong_to_course() {
         $this->setUser($this->student);
@@ -135,6 +143,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test add note external function with user having no access to the course module.
+     *
+     * @covers \local_notebook\external::add_note
      */
     public function test_add_note_with_user_having_no_access_to_cm() {
         $this->setUser($this->user);
@@ -145,6 +155,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test add note external function.
+     *
+     * @covers \local_notebook\external::add_note
      */
     public function test_add_note() {
         $this->setUser($this->student);
@@ -269,6 +281,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test update note external function with user having no access to the note.
+     *
+     * @covers \local_notebook\external::update_note
      */
     public function test_update_note_with_user_having_no_access_to_note() {
         $this->setUser($this->user);
@@ -282,6 +296,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test update note external function with unfound note.
+     *
+     * @covers \local_notebook\external::update_note
      */
     public function test_update_note_with_note_not_found() {
         $this->setUser($this->user);
@@ -295,6 +311,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test update note external function.
+     *
+     * @covers \local_notebook\external::update_note
      */
     public function test_update_note() {
         $this->setUser($this->student);
@@ -325,6 +343,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test delete note external function with user having no access to the note.
+     *
+     * @covers \local_notebook\external::delete_notes
      */
     public function test_delete_note_with_user_having_no_access_to_note() {
         $this->setUser($this->user);
@@ -338,6 +358,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test delete note external function with unfound note.
+     *
+     * @covers \local_notebook\external::delete_notes
      */
     public function test_delete_note_with_note_not_found() {
         $this->setUser($this->user);
@@ -351,6 +373,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test delete notes external function.
+     *
+     * @covers \local_notebook\external::delete_notes
      */
     public function test_delete_notes() {
         $this->setUser($this->student);
@@ -385,6 +409,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test read note external function.
+     *
+     * @covers \local_notebook\external::read_note
      */
     public function test_read_note() {
         $this->setUser($this->student);
@@ -472,6 +498,8 @@ class external_test extends \externallib_advanced_testcase {
 
     /**
      * Test notes list external function.
+     *
+     * @covers \local_notebook\external::notes_list
      */
     public function test_notes_list() {
         $this->setUser($this->student);

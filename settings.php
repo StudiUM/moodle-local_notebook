@@ -36,4 +36,12 @@ if ($hassiteconfig) {
         0,
         1
     ));
+    $settings->add(new admin_setting_configcheckbox(
+        'local_notebook/enabledquizattempt',
+        get_string('enabledquizattempt', 'local_notebook'),
+        get_string('enabledquizattempt_desc', 'local_notebook'),
+        0,
+        0,
+        1
+    ));
 }

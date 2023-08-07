@@ -120,6 +120,38 @@ class access_test extends \advanced_testcase {
     }
 
     /**
+     * Test if notebook can be disabled on all quiz attempts.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_disable_notebook_on_quiz_attempt() {
+        global $PAGE;
+        $this->resetAfterTest(true);
+        // Set config Enabledquizattempt disabled.
+        $this->assertTrue(set_config('enabledquizattempt', 1, 'local_notebook'));
+
+        // Test with quiz attempt page.
+        $PAGE->set_pagetype('mod-quiz-attempt');
+        $this->assert_cannot_access();
+    }
+
+    /**
+     * Test if quiz attempt page can access notebook.
+     *
+     * @covers \local_notebook\helper::has_to_display_notebook
+     */
+    public function test_quiz_attempt_page_can_use_notebook() {
+        global $PAGE;
+        $this->resetAfterTest(true);
+        // Set admin user.
+        $this->setAdminUser();
+
+        // Test with quiz attempt page.
+        $PAGE->set_pagetype('mod-quiz-attempt');
+        $this->assertTrue(helper::has_to_display_notebook());
+    }
+
+    /**
      * Assert can not access to the notebook.
      *
      * @covers \local_notebook\helper::has_to_display_notebook

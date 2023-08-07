@@ -217,6 +217,10 @@ class helper {
         if (!$enabled) {
             return false;
         }
+        $enabledquizattempt = $notebookinfo->is_enabled_quiz_attempt();
+        if (!$enabledquizattempt && $PAGE->pagetype == 'mod-quiz-attempt') {
+            return false;
+        }
         if (in_array($PAGE->pagelayout,
             ['maintenance',
             'print',
