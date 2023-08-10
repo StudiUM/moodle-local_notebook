@@ -30,14 +30,16 @@
     outline: 2px solid var(--white, #fff);
     text-decoration: none;
 }
-.notebookbutton .rolling:hover ,
-.notebookbutton .rolling:focus {
-    width: 230px;
-    display: flex;
-    flex-direction: row;
-    align-content: space-between;
-    justify-content: space-between;
-    outline-color: var(--primary, #0057ac);
+@media (min-width: 992px) {
+    .notebookbutton .rolling:hover,
+    .notebookbutton .rolling:focus {
+        width: 230px;
+        display: flex;
+        flex-direction: row;
+        align-content: space-between;
+        justify-content: space-between;
+        outline-color: var(--primary, #0057ac);
+    }
 }
 .notebookbutton .rolling .rolling_icon {
     z-index: 9;
@@ -166,7 +168,7 @@
         top: 0;
         height: 100%;
         z-index: 1031;
-    }    
+    }
     body.drawer-open-left,
     body.drawer-open-right {
         overflow: hidden
