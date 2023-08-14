@@ -537,6 +537,11 @@ define(
         if ($(document.activeElement).data('action') == 'reset') {
             resetNoteForm();
         } else {
+            // Add an extra check in case one of the input is empty
+            if (isEmpty()) {
+                toggleSaveButton();
+                return;
+            }
             let args = {};
             let update = false;
             let service = 'local_notebook_add_note';
@@ -654,7 +659,7 @@ define(
     var resetNoteForm = () => {
         $(SELECTORS.NOTE_FORM + ' input[name="subject"]').val($(SELECTORS.NOTE_FORM + ' input[name="subjectorigin"]').val());
         $(SELECTORS.NOTE_FORM + ' textarea').val('');
-        if (window.tinyMCE !== undefined) {
+        if (isTinyMceEditor()) {
             getTinyMce().setContent('');
         } else {
             $(SELECTORS.BODY_CONTAINER + " #id_notebook_editoreditable").html('');
@@ -665,6 +670,12 @@ define(
         $(SELECTORS.MESSAGE_SUCCESS_CONTAINER).html('');
 
     };
+
+    /**
+     * Check if the editor is the tiny mce
+     * @returns {boolean} is tiny mce editor
+     */
+    var isTinyMceEditor = () => window.tinyMCE !== undefined;
 
     /**
      * Get the tiny mce editor
@@ -719,8 +730,9 @@ define(
             // Enable/disable save button.
             toggleSaveButton();
             if (!editorListenersInitialized) {
-                if (window.tinyMCE !== undefined) {
-                    getTinyMce().on('input', toggleSaveButton);
+                if (isTinyMceEditor()) {
+                    getTinyMce().on('KeyUp', toggleSaveButton);
+                    getTinyMce().on('ExecCommand', toggleSaveButton);
                 } else {
                     $(SELECTORS.BODY_CONTAINER + ' form textarea').on('change', toggleSaveButton);
                 }
@@ -749,7 +761,7 @@ define(
             done: function(result) {
                 if (result) {
                     $(SELECTORS.DRAWER).removeClass('view').addClass('edit');
-                    if (window.tinyMCE !== undefined) {
+                    if (isTinyMceEditor()) {
                         getTinyMce().setContent(result.summary);
                     } else {
                         $(SELECTORS.BODY_CONTAINER + " #id_notebook_editoreditable").html(result.summary);
@@ -805,31 +817,21 @@ define(
      *
      */
     var toggleSaveButton = () => {
-        let editorcontent = window.tinyMCE !== undefined
+        $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', isEmpty());
+    };
+
+    /**
+     * Check if the title or the editor is empty
+     * @returns {boolean} Is empty
+     */
+    var isEmpty = ()=>{
+        let editorcontent = isTinyMceEditor()
             ? getTinyMce().getContent()
             : $(SELECTORS.BODY_CONTAINER + " #id_notebook_editoreditable").html();
-        let emptyeditor = false;
-        let noteid = $(SELECTORS.NOTE_FORM + ' input[name="noteid"]').val();
-        let samecontent = false;
-        if (noteid !== '0') {
-            let subjectform = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val();
-            let subjectorigin = $(SELECTORS.DRAWER + ' .titlenote').html();
-            let summaryorigin = $(SELECTORS.DRAWER + ' .summarynote').html();
-            if (editorcontent !== undefined
-                && subjectform.localeCompare(subjectorigin) === 0
-                && editorcontent.localeCompare(summaryorigin) === 0) {
-                samecontent = true;
-            }
-        }
-        if (editorcontent !== undefined && editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0
-            && !editorcontent.includes("<img")) {
-            emptyeditor = true;
-        }
-        if ($(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '' || emptyeditor || samecontent) {
-            $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', true);
-        } else {
-            $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', false);
-        }
+        let emptyTitle = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '';
+        let emptyEditor = editorcontent !== undefined && editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0
+        && !editorcontent.includes("<img");
+        return emptyTitle || emptyEditor;
     };
 
     /**

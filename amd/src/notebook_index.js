@@ -423,6 +423,11 @@ define(
         if ($(document.activeElement).data('action') == 'reset') {
             cancelNoteForm();
         } else {
+            // Add an extra check in case one of the input is empty
+            if (isEmpty()) {
+                toggleSaveButton();
+                return;
+            }
             let args = {};
             args.noteid = $(SELECTORS.NOTE_FORM + ' input[name="noteid"]').val();
             args.subject = $(SELECTORS.NOTE_FORM + ' input[name="subject"]').val();
@@ -493,6 +498,18 @@ define(
     };
 
     /**
+     * Check if the editor is the tiny mce
+     * @returns {boolean} is tiny mce editor
+     */
+    var isTinyMceEditor = () => window.tinyMCE !== undefined;
+
+    /**
+     * Get the tiny mce editor
+     * @returns {object} Tiny Mce editor instance
+     */
+    var getTinyMce = () => window.tinyMCE.get(SELECTORS.NOTE_SUMMARY.replace('#', ''));
+
+    /**
      * Hide note view.
      *
      * @param {String} focus
@@ -514,8 +531,9 @@ define(
 
         if (!editorListenersInitialized) {
             // Enable/disabled save button.
-            if (window.tinyMCE !== undefined) {
-                window.tinyMCE.activeEditor.on('input', toggleSaveButton);
+            if (isTinyMceEditor()) {
+                getTinyMce().on('KeyUp', toggleSaveButton);
+                getTinyMce().on('ExecCommand', toggleSaveButton);
             } else {
                 $(SELECTORS.FORM_CONTAINER + ' form textarea').on('change', toggleSaveButton);
             }
@@ -556,8 +574,8 @@ define(
             args: {noteid: noteid},
             done: function(result) {
                 if (result) {
-                    if (window.tinyMCE !== undefined) {
-                        window.tinyMCE.activeEditor.setContent(result.summary);
+                    if (isTinyMceEditor()) {
+                        getTinyMce().setContent(result.summary);
                     } else {
                         $(SELECTORS.FORM_CONTAINER + " #id_notebook_editoreditable").html(result.summary);
                     }
@@ -610,29 +628,21 @@ define(
      *
      */
     var toggleSaveButton = () => {
-        let editorcontent = window.tinyMCE !== undefined
-            ? window.tinyMCE.activeEditor.getContent()
+        $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', isEmpty());
+    };
+
+    /**
+     * Check if the title or the editor is empty
+     * @returns {boolean} Is empty
+     */
+    var isEmpty = ()=>{
+        let editorcontent = isTinyMceEditor()
+            ? getTinyMce().getContent()
             : $(SELECTORS.FORM_CONTAINER + " #id_notebook_editoreditable").html();
-        let emptyeditor = false;
-        let noteid = $(SELECTORS.NOTE_FORM + ' input[name="noteid"]').val();
-        let samecontent = false;
-        if (noteid !== '0') {
-            let subjectform = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val();
-            let subjectorigin = $(SELECTORS.NOTEINDEX + ' .titlenote').html();
-            let summaryorigin = $(SELECTORS.NOTEINDEX + ' .summarynote').html();
-            if (subjectform.localeCompare(subjectorigin) === 0 && editorcontent.localeCompare(summaryorigin) === 0) {
-                samecontent = true;
-            }
-        }
-        if (editorcontent !== undefined && editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0
-            && !editorcontent.includes("<img")) {
-            emptyeditor = true;
-        }
-        if ($(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '' || emptyeditor || samecontent) {
-            $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', true);
-        } else {
-            $(SELECTORS.NOTE_FORM + ' ' + SELECTORS.SAVE_BUTTON).prop('disabled', false);
-        }
+        let emptyTitle = $(SELECTORS.NOTE_FORM + ' input[type="text"]').val() == '';
+        let emptyEditor = editorcontent !== undefined && editorcontent.replace(/<(.|\n)*?>/g, '').trim().length === 0
+        && !editorcontent.includes("<img");
+        return emptyTitle || emptyEditor;
     };
 
     /**
