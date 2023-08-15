@@ -506,6 +506,7 @@
 }
 .notebookcontainer [data-region="notebook-index"] .backtolist {
     visibility: hidden;
+    display: none;
 }
 .notebookcontainer [data-region="notebook-index"] form#noteform #fgroup_id_buttonar .col-md-9.form-inline .d-flex.flex-wrap.align-items-center .fitem:last-child {
     margin-left: auto !important;
@@ -515,4 +516,14 @@
 }
 .notebookcontainer .bootstrap-table .fixed-table-container .table thead th .both {
     filter: brightness(10%);
+}
+.notebookcontainer [data-region="notebook-drawer"] .hidelist {
+    visibility: hidden;
+}
+.notebookcontainer [data-region="notebook-index"] .hidelist,
+.notebookcontainer [data-region="notebook-index"] .showlist {
+    float: left;
+    padding: .25rem .75rem;
+    margin-top: 5px;
+    margin-left: 0;
 }

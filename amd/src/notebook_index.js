@@ -61,6 +61,7 @@ define(
         BODY_CONTAINER: '[data-region="body-container"]',
         FORM_CONTAINER: '[data-region="form-note"]',
         CLOSE_BUTTON: '[data-action="closedrawer"]',
+        NOTE_LIST_CONTAINER: '[data-region="notebook-index"] .notelistcontainer',
         NOTE_TABLE_CONTAINER: '#notebook-table-index-container',
         NOTE_TABLE: '#notebook-table-index',
         NOTE_TABLE_LOADING: '#notebook-table-index-loading',
@@ -77,6 +78,8 @@ define(
         HEADER_NOTE_CREATED_DATE: '[data-region="header-container"] .notecreateddate',
         HEADER_NOTE_LAST_MODIFIED_DATE: '[data-region="header-container"] .notelastmodifieddate',
         NOTE_FORM: '[data-region="form-note"] #noteform',
+        HEADER_NOTE_HIDE_LIST: '[data-region="header-container"] .hidelist',
+        HEADER_NOTE_SHOW_LIST: '[data-region="header-container"] .showlist',
         HEADER_NOTE_DELETE: '[data-region="header-container"] .deletenote',
         HEADER_NOTE_EDIT: '[data-region="header-container"] .editnote',
         FOOTER_NOTE_TAGS: '[data-region="footer-container"] .notetags',
@@ -100,6 +103,7 @@ define(
     };
     /** Editor listeners state */
     var editorListenersInitialized = false;
+    var listNotesHidden = false;
 
     /**
      * Refresh notes.
@@ -445,6 +449,8 @@ define(
                         displayNoteView();
                         // Display note.
                         displayNote(args.noteid);
+                        // hide the notes list if already the case before
+                        if(listNotesHidden) { hideNoteList(); }
                     }
                 },
                 fail: notification.exception
@@ -539,6 +545,45 @@ define(
             }
             $(SELECTORS.FORM_CONTAINER + ' form input[type="text"]').on('input', toggleSaveButton);
         }
+    };
+
+    /**
+    * Hide note List
+    */
+    var hideNoteList = () => {
+        // hide the note list section
+        $(SELECTORS.NOTE_LIST_CONTAINER).attr('display', 'none');
+        $(SELECTORS.NOTE_LIST_CONTAINER).removeClass().addClass('notelistcontainer hidden');
+        // make the section note view the full width of the page
+        $(SELECTORS.NOTE_DETAIL_CONTAINER).removeClass('col-xl-5');
+        $(SELECTORS.NOTE_DETAIL_CONTAINER).addClass('col-xl-12');
+        // switch the button to show notes list
+        $(SELECTORS.HEADER_NOTE_HIDE_LIST).addClass('hidden');
+        $(SELECTORS.HEADER_NOTE_HIDE_LIST).attr('aria-hidden', true);
+        $(SELECTORS.HEADER_NOTE_SHOW_LIST).removeClass('hidden');
+        $(SELECTORS.HEADER_NOTE_SHOW_LIST).removeAttr('aria-hidden');
+        // notes list hidden (listener)
+        listNotesHidden = true;
+    };
+
+    /**
+    * Show note List
+    */
+    var showNoteList = () => {
+        // hide the note list section
+        $(SELECTORS.NOTE_LIST_CONTAINER).removeClass('hidden');
+        $(SELECTORS.NOTE_LIST_CONTAINER).removeAttr('display');
+        $(SELECTORS.NOTE_LIST_CONTAINER).addClass('col-12 col-xl-7 d-flex flex-column border pr-2 pl-2  mt-2');
+        // make the section note view with default width
+        $(SELECTORS.NOTE_DETAIL_CONTAINER).removeClass('col-xl-12');
+        $(SELECTORS.NOTE_DETAIL_CONTAINER).addClass('col-xl-5');
+        // switch the button to hide notes list
+        $(SELECTORS.HEADER_NOTE_SHOW_LIST).addClass('hidden');
+        $(SELECTORS.HEADER_NOTE_SHOW_LIST).attr('aria-hidden', true);
+        $(SELECTORS.HEADER_NOTE_HIDE_LIST).removeClass('hidden');
+        $(SELECTORS.HEADER_NOTE_HIDE_LIST).removeAttr('aria-hidden');
+        // notes list shown (listener)
+        listNotesHidden = false;
     };
 
     /**
@@ -701,6 +746,14 @@ define(
             } else {
                 $(this).find('input[type="checkbox"]').trigger('click');
             }
+        });
+        // Hide note list.
+        $(SELECTORS.NOTEINDEX).on('click', SELECTORS.HEADER_NOTE_HIDE_LIST, function() {
+            hideNoteList();
+        });
+        // Show note list.
+        $(SELECTORS.NOTEINDEX).on('click', SELECTORS.HEADER_NOTE_SHOW_LIST, function() {
+            showNoteList();
         });
         // Edit note.
         $(SELECTORS.NOTEINDEX).on('click', SELECTORS.HEADER_NOTE_EDIT, function() {
