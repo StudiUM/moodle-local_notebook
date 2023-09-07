@@ -661,6 +661,7 @@ define(
         $(SELECTORS.NOTE_FORM + ' textarea').val('');
         if (isTinyMceEditor()) {
             getTinyMce().setContent('');
+            getTinyMce().on('FullscreenStateChanged', updateStylesInFullscreen);
         } else {
             $(SELECTORS.BODY_CONTAINER + " #id_notebook_editoreditable").html('');
         }
@@ -682,6 +683,31 @@ define(
      * @returns {object} Tiny Mce editor instance
      */
     var getTinyMce = () => window.tinyMCE.get(SELECTORS.NOTE_SUMMARY.replace('#', ''));
+
+    /**
+    * Update Drawer CSS styles for TinyMCE full screen mode
+    * @param {Type} event
+    */
+    function updateStylesInFullscreen(event) {
+        // Check if TinyMCE is in fullscreen mode
+        let isFullscreen = event.state;
+        let $drawer = $('[data-region="right-hand-notebook-drawer"].drawer');
+        if (isFullscreen) {
+            // CSS styles to apply when TinyMCE is in full screen mode
+            $drawer.css({
+                'zIndex': '1040',
+                'width': '100%',
+                'top': '0px'
+            });
+        } else {
+            // Restore default styles here
+            $drawer.css({
+                'zIndex': '1020',
+                'width': '576px',
+                'top': '60px'
+            });
+        }
+    }
 
     /**
      * Hide note view.
@@ -763,6 +789,7 @@ define(
                     $(SELECTORS.DRAWER).removeClass('view').addClass('edit');
                     if (isTinyMceEditor()) {
                         getTinyMce().setContent(result.summary);
+                        getTinyMce().on('FullscreenStateChanged', updateStylesInFullscreen);
                     } else {
                         $(SELECTORS.BODY_CONTAINER + " #id_notebook_editoreditable").html(result.summary);
                     }
