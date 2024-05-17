@@ -36,13 +36,15 @@
 <div class="p-3 bg-white" data-region="confirm-dialogue" role="alert">
     <p class="text-muted multiplenotes" data-region="dialogue-text">{{#cleanstr}} confirmdeletemultiplenotes, local_notebook {{/cleanstr}}</p>
     <p class="text-muted singlenote" data-region="dialogue-text">{{#cleanstr}} confirmdeletesinglenote, local_notebook {{/cleanstr}}</p>
-    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-multiple">
+    <input type="hidden" id="hidden_input_for_confirm_delete_button" value="">
+    <input type="hidden" id="hidden_input_for_confirm_delete_action" value="">
+    <button id="confirm_delete_multiple_button" type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-multiple">
         <span data-region="dialogue-button-text">{{#cleanstr}} delete, core {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>
     <button type="button" class="btn btn-secondary btn-block" data-action="cancel-delete-multiple">{{#cleanstr}} cancel, core {{/cleanstr}}</button>
 
-    <button type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-single">
+    <button id="confirm_delete_single_button" type="button" class="btn btn-primary btn-block hidden" data-action="confirm-delete-single">
         <span data-region="dialogue-button-text">{{#cleanstr}} delete, core {{/cleanstr}}</span>
         <span class="hidden" data-region="loading-icon-container">{{> core/loading }}</span>
     </button>

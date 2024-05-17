@@ -404,6 +404,8 @@ define(
                 list.push($(this).val());
             });
             $(SELECTORS.CONFIRM_DELETE_BUTTON_MULTI).data('noteid', list);
+            $('#hidden_input_for_confirm_delete_button').val(list);
+            $('#hidden_input_for_confirm_delete_action').val('confirm-delete-multiple');
             $(SELECTORS.CONFIRM_DELETE_BUTTON_MULTI).focus();
         } else {
             let tohide = SELECTORS.CONFIRM_TEXT_MULTI + ', ' + SELECTORS.CONFIRM_DELETE_BUTTON_MULTI + ',' +
@@ -414,6 +416,8 @@ define(
             $(toshow).removeClass('hidden');
             $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).data('noteid',
                 $(SELECTORS.HEADER_NOTE_DELETE).data('noteid'));
+            $('#hidden_input_for_confirm_delete_button').val($(SELECTORS.HEADER_NOTE_DELETE).data('noteid'));
+            $('#hidden_input_for_confirm_delete_action').val('confirm-delete-single');
             $(SELECTORS.CONFIRM_DELETE_BUTTON_SINGLE).focus();
         }
         window.scrollTo(0, $(SELECTORS.DIALOGUE_CONTAINER).position().top);
@@ -464,14 +468,15 @@ define(
      * @return {boolean}
      */
     var submitDeleteAjax = () => {
-        let action = $(document.activeElement).data('action');
+        let action = $('#hidden_input_for_confirm_delete_action').val();
         let notesids = [];
         let keymessage = 'notedeleted';
+        let id = $('#hidden_input_for_confirm_delete_button').val();
         if (action === 'confirm-delete-multiple') {
-            notesids = $(document.activeElement).data('noteid');
+            notesids = id.split(',');
             keymessage = 'notedeletedmultiple';
         } else {
-            notesids.push($(document.activeElement).data('noteid'));
+            notesids.push(id);
         }
         ajax.call([{
             methodname: 'local_notebook_delete_notes',
