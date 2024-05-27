@@ -27,15 +27,14 @@ Feature: Notebook instance tag display
     And I am on the "Test forum name" "forum activity" page logged in as teacher1
     And I click on "Open my notebook" "button"
     And I click on "Add note" "button"
-    And I click on "id_notebook_editoreditable" "region"
-    And I type "Bonjour"
+    And I set the field "id_notebook_editor" to "Bonjour"
     And I click on "savenote" "button"
     # Getting out of course so no confusion with links.
     And I am on site homepage
     And I click on "Open my notebook" "button"
-    And "C1" "link" should be visible
-    And "Test forum name" "link" should be visible
+    And "Course 1" "link" should be visible
     And I am on "Course 1" course homepage with editing mode on
+    And I should see "Test forum name" in the "region-main" "region"
     And I delete "Test forum name" activity
     And I run all adhoc tasks
     And I am on "Course 1" course homepage
@@ -45,5 +44,4 @@ Feature: Notebook instance tag display
     And I press "Yes"
     And I am on site homepage
     And I click on "Open my notebook" "button"
-    And I should see "Test forum name"
-    And I hover "//span[@title='Test forum name activity has been deleted']" "xpath_element"
+    And I should not see "Test forum name" in the "region-main" "region"
