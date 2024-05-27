@@ -111,11 +111,11 @@ class api {
             $notebook->set('activityname', $cm->name);
         }
 
-        if (trim($note) == '') {
+        if (trim((string)$note) == '') {
             throw new \moodle_exception('notecannotbeempty', 'local_notebook');
         }
 
-        if (trim($subject) == '') {
+        if (trim((string)$subject) == '') {
             throw new \moodle_exception('subjectcannotbeempty', 'local_notebook');
         }
         $note = (object) [

@@ -24,17 +24,17 @@
  */
 
 namespace local_notebook;
-defined('MOODLE_INTERNAL') || die();
-
-require_once("$CFG->libdir/externallib.php");
 
 use context_system;
-use external_api;
-use external_function_parameters;
-use external_value;
-use external_multiple_structure;
+use core_external\external_api;
+use core_external\external_description;
+use core_external\external_function_parameters;
+use core_external\external_multiple_structure;
+use core_external\external_value;
 use \local_notebook\api;
 use \local_notebook\local_notebook_posts;
+
+defined('MOODLE_INTERNAL') || die();
 
 /**
  * External API class.
@@ -49,7 +49,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function add_note_parameters() {
         $userid = new external_value(
@@ -116,11 +116,12 @@ class external extends external_api {
             'itemid' => $itemid,
         ]);
         $note = $params['note'];
-        parse_str($params['note'], $data);
-        if (is_array($data) && isset($data['note'])) {
-            $note = $data['note']['text'];
+        if (is_string($note)) {
+            parse_str($params['note'], $data);
+            if (is_array($data) && isset($data['note'])) {
+                $note = $data['note']['text'];
+            }
         }
-
         return api::add_note(
             $note,
             $params['subject'],
@@ -134,7 +135,7 @@ class external extends external_api {
     /**
      * Returns description of add_note() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function add_note_returns() {
         return new external_value(PARAM_INT, 'the ID of the note created');
@@ -143,7 +144,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function update_note_parameters() {
         $noteid = new external_value(
@@ -194,9 +195,11 @@ class external extends external_api {
             'itemid' => $itemid,
         ]);
         $note = $params['note'];
-        parse_str($params['note'], $data);
-        if (is_array($data) && isset($data['note'])) {
-            $note = $data['note']['text'];
+        if (is_string($note)) {
+            parse_str($params['note'], $data);
+            if (is_array($data) && isset($data['note'])) {
+                $note = $data['note']['text'];
+            }
         }
         return api::update_note(
             $params['noteid'],
@@ -209,7 +212,7 @@ class external extends external_api {
     /**
      * Returns description of update_note() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function update_note_returns() {
         return new external_value(PARAM_BOOL, 'True if update was successful.');
@@ -218,7 +221,7 @@ class external extends external_api {
     /**
      * Returns description of delete_notes parameters
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function delete_notes_parameters() {
         return new external_function_parameters(
@@ -259,7 +262,7 @@ class external extends external_api {
     /**
      * Returns description of get_form_subject parameters
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function get_form_subject_parameters() {
         $userid = new external_value(
@@ -319,7 +322,7 @@ class external extends external_api {
     /**
      * Returns description of external function parameters.
      *
-     * @return \external_function_parameters
+     * @return external_function_parameters
      */
     public static function read_note_parameters() {
         $noteid = new external_value(
@@ -361,7 +364,7 @@ class external extends external_api {
     /**
      * Returns description of read_note() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function read_note_returns() {
         return \local_notebook\external\notebook_exporter::get_read_structure();
@@ -434,7 +437,7 @@ class external extends external_api {
     /**
      * Returns description of notes_list() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function notes_list_returns() {
         return new external_multiple_structure(\local_notebook\external\notebook_exporter::get_read_structure());
@@ -473,7 +476,7 @@ class external extends external_api {
     /**
      * Returns description of note_viewed() result value.
      *
-     * @return \external_description
+     * @return external_description
      */
     public static function note_viewed_returns() {
         return new external_value(PARAM_BOOL, 'True if the event note viewed was logged');
