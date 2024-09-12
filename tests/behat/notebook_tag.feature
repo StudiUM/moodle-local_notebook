@@ -22,6 +22,8 @@ Feature: Notebook instance tag display
       | Forum name  | Test forum name                |
       | Forum type  | Standard forum for general use |
       | Description | Test forum description         |
+    And the following config values are set as admin:
+      | behat_running | 1 | local_notebook |
 
   Scenario: Adding a note from a course module I can see a tag note
     And I am on the "Test forum name" "forum activity" page logged in as teacher1

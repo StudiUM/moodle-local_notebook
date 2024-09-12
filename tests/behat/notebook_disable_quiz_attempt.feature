@@ -26,6 +26,8 @@ Feature: Notebook can be disabled on all quiz attempts
     And quiz "Quiz 1" contains the following questions:
       | question | page |
       | TF1      | 1    |
+    And the following config values are set as admin:
+      | behat_running | 1 | local_notebook |
 
   Scenario: Disabling notebook hides drawer on any quiz attempt
     Given I log in as "admin"

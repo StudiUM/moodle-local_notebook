@@ -216,6 +216,10 @@ class helper {
      */
     public static function has_to_display_notebook() {
         global $PAGE;
+        if (defined('BEHAT_SITE_RUNNING') && !get_config('local_notebook', 'behat_running')) {
+            return false;
+        }
+
         $notebookinfo = new notebook();
         $enabled = $notebookinfo->is_enabled();
         if (!$enabled) {

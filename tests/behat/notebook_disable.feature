@@ -5,7 +5,9 @@ Feature: Notebook can be disabled
   I need to be able to set a configuration that will disable it
 
   Background:
-    Given I log in as "admin"
+    Given the following config values are set as admin:
+      | behat_running | 1 | local_notebook |
+    And I log in as "admin"
 
   Scenario: Disabling notebook hides drawer
     And "Open my notebook" "button" should be visible
